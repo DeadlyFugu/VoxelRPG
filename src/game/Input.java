@@ -48,7 +48,7 @@ public class Input {
 		else cty = 0;
 	}
 	
-	public void readFromConfigFile(String filename) {
+	public void writeConfigToFile(String filename) {
 		File file = new File(filename);
 		try {
 			BufferedWriter bw = new BufferedWriter(new FileWriter(file));
@@ -64,7 +64,7 @@ public class Input {
 		}
 	}
 	
-	public void writeConfigToFile(String filename) {
+	public void readFromConfigFile(String filename) {
 		HashMap<String, Boolean> hashmap = new HashMap<String, Boolean>();
 		File file = new File(filename);
 		try {

@@ -1,0 +1,12 @@
+Up,200
+Down,208
+Left,203
+Right,205
+Jump,44
+Sprint,45
+Weapon1,30
+Weapon2,31
+CamUp,23
+CamDown,37
+CamLeft,36
+CamRight,38
