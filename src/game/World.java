@@ -19,6 +19,8 @@ public class World {
 	
 	public World(Input input) {
 		this.input = input;
+		allChunks.add(new Chunk(0, 0));
+		activeChunks.add(allChunks.get(0));
 	}
 	
 	public void update() {
@@ -40,6 +42,10 @@ public class World {
 		
 		for (Entity e : entities) {
 			e.update();
+		}
+		
+		for (Chunk c : activeChunks) {
+			c.render();
 		}
 	}
 }

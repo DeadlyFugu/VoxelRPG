@@ -5,6 +5,8 @@ package game;
 import org.lwjgl.LWJGLException;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.DisplayMode;
+import org.lwjgl.opengl.GLContext;
+
 import static org.lwjgl.opengl.GL11.*;
 
 public class Game {
@@ -46,6 +48,14 @@ public class Game {
 		glLoadIdentity();
 		glOrtho(0, 800, 0, 600, 1, -1);
 		glMatrixMode(GL_MODELVIEW);
+		
+		//Check to see if required extensions are supported
+		if (GLContext.getCapabilities().GL_ARB_vertex_buffer_object) {
+			System.out.println("GL VBOs are supported! :D");
+		} else {
+			System.out.println("GL VBOs aren't supported! D:");
+			System.exit(1);
+		}
 		
 		//Code init
 		input = new Input();
