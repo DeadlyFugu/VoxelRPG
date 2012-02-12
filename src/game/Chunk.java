@@ -174,7 +174,7 @@ public class Chunk {
 		//GL11.glEnableClientState(GL11.GL_COLOR_ARRAY);
 		//ARBVertexBufferObject.glBindBufferARB(ARBVertexBufferObject.GL_ARRAY_BUFFER_ARB, vboidc);
 		//GL11.glColorPointer(4, GL11.GL_BYTE, 0, 0);
-		//GL11.glRotated(90, 1, 0, 0);
+		GL11.glRotated(90, 1, 0, 0);
 		
 		GL11.glPopMatrix();
 	}

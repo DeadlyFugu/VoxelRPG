@@ -11,7 +11,7 @@ public class Camera {
 	private float x,y,z;
 	private float tx,ty,tz;
 	private float lx,ly,lz;
-	private float[] cp = {0,0,32,0,0,0,0,1,0};
+	private float[] cp = {-10,42,-10,0,32,0,0,1,0};
 	private float xsteps, ysteps, zsteps = 0;
 	
 	public Camera(Input input, Player player) {
@@ -47,7 +47,7 @@ public class Camera {
 		//cp[5] = cp[2] - 3;
 		
 		System.out.println("View updated"+cp[2]);
-	    glLoadIdentity();
+	    //glLoadIdentity();
 	    
 	    /*GLU.gluLookAt(x, y, z,
 	              player.x,player.y,player.z,
