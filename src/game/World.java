@@ -16,29 +16,19 @@ public class World {
 	private ArrayList<Chunk> activeChunks = new ArrayList<Chunk>();
 	
 	public Input input;
+	public Player player;
 	
-	public World(Input input) {
+	public World(Input input, Player player) {
 		this.input = input;
+		this.player = player;
 		allChunks.add(new Chunk(0, 0));
 		activeChunks.add(allChunks.get(0));
 	}
 	
 	public void update() {
 		//Update
-		
-		// Clear the screen and depth buffer
-	    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);	
-		
-	    // set the color of the quad (R,G,B,A)
-	    glColor3f(0.5f,0.5f,1.0f);
-	    	
-	    // draw quad
-	    glBegin(GL_QUADS);
-	    glVertex2f(100,100);
-		glVertex2f(100+200,100);
-		glVertex2f(100+200,100+200);
-		glVertex2f(100,100+200);
-	    glEnd();
+	    
+	    player.update(input);
 		
 		for (Entity e : entities) {
 			e.update();
