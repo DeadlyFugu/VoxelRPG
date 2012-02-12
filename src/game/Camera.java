@@ -25,28 +25,32 @@ public class Camera {
 	public void updateView() {
 		
 		if (input.isKeyPressed("Up")) {
-			cp[0] += 0.03;
+			cp[0] += 0.3;
+			cp[2] += 0.3;
 		}
 		if (input.isKeyPressed("Down")) {
-			cp[0] -= 0.03;
+			cp[0] -= 0.3;
+			cp[2] -= 0.3;
 		}
 		if (input.isKeyPressed("Right")) {
-			cp[1] += 0.003;
+			cp[0] -= 0.3;
+			cp[2] += 0.3;
 		}
 		if (input.isKeyPressed("Left")) {
-			cp[1] -= 0.003;
+			cp[0] += 0.3;
+			cp[2] -= 0.3;
 		}
 		if (input.isKeyPressed("Jump")) {
-			cp[2] += 0.003;
+			cp[1] += 0.3;
 		}
 		if (input.isKeyPressed("Sprint")) {
-			cp[2] -= 0.003;
+			cp[1] -= 0.3;
 		}
-		//cp[3] = cp[0] + 1;
-		//cp[4] = cp[1] + 2;
-		//cp[5] = cp[2] - 3;
+		cp[3] = cp[0] + 10;
+		cp[4] = cp[1] -10;
+		cp[5] = cp[2] + 10;
 		
-		System.out.println("View updated"+cp[2]);
+		//System.out.println("View updated"+cp[2]);
 	    //glLoadIdentity();
 	    
 	    /*GLU.gluLookAt(x, y, z,

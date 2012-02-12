@@ -133,6 +133,7 @@ public class Game {
 		Display.setDisplayMode(displayMode);
 		Display.setTitle(windowTitle);
 		Display.create();
+		Display.setVSyncEnabled(true);
 	}
 	private void init() throws Exception {
 		createWindow();
@@ -150,6 +151,8 @@ public class Game {
 		GL11.glShadeModel(GL11.GL_SMOOTH); // Enable Smooth Shading
 		GL11.glClearColor(0.0f, 0.0f, 0.0f, 0.0f); // Black Background
 		GL11.glClearDepth(1.0f); // Depth Buffer Setup
+		//GL11.glEnable(GL11.GL_CULL_FACE);
+		//GL11.glCullFace(GL11.GL_BACK);
 		GL11.glEnable(GL11.GL_DEPTH_TEST); // Enables Depth Testing
 		GL11.glDepthFunc(GL11.GL_LEQUAL); // The Type Of Depth Testing To Do
 
