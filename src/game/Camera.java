@@ -11,7 +11,7 @@ public class Camera {
 	private float x,y,z;
 	private float tx,ty,tz;
 	private float lx,ly,lz;
-	private float[] cp = {-10,42,-10,0,32,0,0,1,0};
+	public float[] cp = {-10,42,-10,0,32,0,0,1,0};
 	private float xsteps, ysteps, zsteps = 0;
 	
 	public Camera(Input input, Player player) {

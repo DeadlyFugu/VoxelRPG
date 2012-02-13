@@ -195,7 +195,7 @@ public class Chunk {
 		for (int i=0; i<32; i++) {
 			for (int j=0; j<32; j++) {
 				//heightMap[i][j] = (byte) (FastNoise.noise(i*2, j*2, 10));
-				heightMap[i][j] = (byte) (32+PerlinNoise.pNoise((x*32+i)*0.1, (y*32+j)*0.1, 0.3, 2)*32);
+				heightMap[i][j] = (byte) (32+PerlinNoise.pNoise((x*32+i)*0.05, (y*32+j)*0.05, 0.3, 2)*32);
 			}
 		}
 		/*for (int i=0; i<32; i++) {

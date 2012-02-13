@@ -17,10 +17,12 @@ public class World {
 	
 	public Input input;
 	public Player player;
+	private Camera camera;
 	
-	public World(Input input, Player player) {
+	public World(Input input, Player player, Camera camera) {
 		this.input = input;
 		this.player = player;
+		this.camera = camera;
 	}
 	
 	public void update() {
@@ -32,8 +34,8 @@ public class World {
 			e.update();
 		}
 		
-		int pcx = (int) (player.x/32);
-		int pcy = (int) (player.y/32);
+		int pcx = (int) (camera.cp[0]/32);
+		int pcy = (int) (camera.cp[2]/32);
 		
 		Chunk[] suitableChunksFound = {null,null,null,null,null,null,null,null,null};
 		for (Chunk c : allChunks) {

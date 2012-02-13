@@ -143,9 +143,9 @@ public class Game {
 		
 		input = new Input();
 		player = new Player();
-		world = new World(input,player);
-		player.setWorld(world);
 		camera = new Camera(input,player);
+		world = new World(input,player,camera);
+		player.setWorld(world);
 	}
 	private void initGL() {
 		GL11.glEnable(GL11.GL_TEXTURE_2D); // Enable Texture Mapping
