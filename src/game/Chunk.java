@@ -40,6 +40,10 @@ public class Chunk {
 	private void generateVBO() {
 		ArrayList<Float> vboDataAL = new ArrayList<Float>();
 		ArrayList<Byte> vboDataALE = new ArrayList<Byte>();
+		byte[] bcolr = {0,60};
+		byte[] bcolg = {0,120};
+		byte[] bcolb = {0,20};
+		double shadeLevel = 0.5;
 		for (int  i=0; i<width; i++) {
 			for (int  j=0; j<width; j++) {
 				for (int  k=0; k<height; k++) {
@@ -51,46 +55,60 @@ public class Chunk {
 								(chunkData[i][j][Math.min(k+1,height-1)] == 0),
 								(chunkData[i][j][Math.max(k-1,0)] == 0)
 						};
-						System.out.println((int) chunkData[i][j][k]);
 						//if (dircol[2]) System.out.println("Yes"); else System.out.println("Nope");
 						//System.out.println((int) chunkData[i][j][k])
-						byte[] vcol = {120,110,100,90,80,70,60,50};
+						
+						double[] vcol = {1,1,1,1,1,1,1,1};
+						if (i!= 0 && i!= 31 && j!= 0 && j!= 31 && k!= 0 && k!= 63) {
+							if (chunkData[i][j][k+1] == 0) {
+								if (chunkData[i-1][j][k+1] != 0) vcol[6] = vcol[7] = shadeLevel;
+								if (chunkData[i+1][j][k+1] != 0) vcol[0] = vcol[1] = shadeLevel;
+								if (chunkData[i][j-1][k+1] != 0) vcol[1] = vcol[6] = shadeLevel;
+								if (chunkData[i][j+1][k+1] != 0) vcol[0] = vcol[7] = shadeLevel;
+								
+								if (chunkData[i-1][j-1][k+1] != 0) vcol[6] = shadeLevel;
+								if (chunkData[i+1][j-1][k+1] != 0) vcol[1] = shadeLevel;
+								if (chunkData[i-1][j+1][k+1] != 0) vcol[7] = shadeLevel;
+								if (chunkData[i+1][j+1][k+1] != 0) vcol[0] = shadeLevel;								
+							}
+						}
+						byte bid = chunkData[i][j][k];
 
 						if (dircol[0]) { //+x axis stable
-							vertexToAL(i+1.0f,j+1.0f,k+1.0f,vcol[0],vcol[0],vcol[0],vcol[1],vboDataAL,vboDataALE);
-							vertexToAL(i+1.0f,j+0.0f,k+1.0f,vcol[1],vcol[1],vcol[1],vcol[1],vboDataAL,vboDataALE);
-							vertexToAL(i+1.0f,j+0.0f,k+0.0f,vcol[2],vcol[2],vcol[2],vcol[1],vboDataAL,vboDataALE);
-							vertexToAL(i+1.0f,j+1.0f,k+0.0f,vcol[3],vcol[3],vcol[3],vcol[1],vboDataAL,vboDataALE);
+							vertexToAL(i+1.0f,j+1.0f,k+1.0f,(byte) (bcolr[bid]*vcol[0]),(byte) (bcolg[bid]*vcol[0]),(byte) (bcolb[bid]*vcol[0]),(byte) 1,vboDataAL,vboDataALE);
+							vertexToAL(i+1.0f,j+0.0f,k+1.0f,(byte) (bcolr[bid]*vcol[1]),(byte) (bcolg[bid]*vcol[1]),(byte) (bcolb[bid]*vcol[1]),(byte) 1,vboDataAL,vboDataALE);
+							vertexToAL(i+1.0f,j+0.0f,k+0.0f,(byte) (bcolr[bid]*vcol[2]),(byte) (bcolg[bid]*vcol[2]),(byte) (bcolb[bid]*vcol[2]),(byte) 1,vboDataAL,vboDataALE);
+							vertexToAL(i+1.0f,j+1.0f,k+0.0f,(byte) (bcolr[bid]*vcol[3]),(byte) (bcolg[bid]*vcol[3]),(byte) (bcolb[bid]*vcol[3]),(byte) 1,vboDataAL,vboDataALE);
 						}
 						if (dircol[1]) { //-x axis stable
-							vertexToAL(i+0.0f,j+1.0f,k+0.0f,vcol[4],vcol[4],vcol[4],vcol[1],vboDataAL,vboDataALE);
-							vertexToAL(i+0.0f,j+0.0f,k+0.0f,vcol[5],vcol[5],vcol[5],vcol[1],vboDataAL,vboDataALE);
-							vertexToAL(i+0.0f,j+0.0f,k+1.0f,vcol[6],vcol[6],vcol[6],vcol[1],vboDataAL,vboDataALE);
-							vertexToAL(i+0.0f,j+1.0f,k+1.0f,vcol[7],vcol[7],vcol[7],vcol[1],vboDataAL,vboDataALE);
+							vertexToAL(i+0.0f,j+1.0f,k+0.0f,(byte) (bcolr[bid]*vcol[4]),(byte) (bcolg[bid]*vcol[4]),(byte) (bcolb[bid]*vcol[4]),(byte) 1,vboDataAL,vboDataALE);
+							vertexToAL(i+0.0f,j+0.0f,k+0.0f,(byte) (bcolr[bid]*vcol[5]),(byte) (bcolg[bid]*vcol[5]),(byte) (bcolb[bid]*vcol[5]),(byte) 1,vboDataAL,vboDataALE);
+							vertexToAL(i+0.0f,j+0.0f,k+1.0f,(byte) (bcolr[bid]*vcol[6]),(byte) (bcolg[bid]*vcol[6]),(byte) (bcolb[bid]*vcol[6]),(byte) 1,vboDataAL,vboDataALE);
+							vertexToAL(i+0.0f,j+1.0f,k+1.0f,(byte) (bcolr[bid]*vcol[7]),(byte) (bcolg[bid]*vcol[7]),(byte) (bcolb[bid]*vcol[7]),(byte) 1,vboDataAL,vboDataALE);
 						}
 						if (dircol[2]) { //+y axis stable
-							vertexToAL(i+1.0f,j+1.0f,k+0.0f,vcol[3],vcol[3],vcol[3],vcol[1],vboDataAL,vboDataALE);
-							vertexToAL(i+0.0f,j+1.0f,k+0.0f,vcol[4],vcol[4],vcol[4],vcol[1],vboDataAL,vboDataALE);
-							vertexToAL(i+0.0f,j+1.0f,k+1.0f,vcol[7],vcol[7],vcol[7],vcol[1],vboDataAL,vboDataALE);
-							vertexToAL(i+1.0f,j+1.0f,k+1.0f,vcol[0],vcol[0],vcol[0],vcol[1],vboDataAL,vboDataALE);
+							vertexToAL(i+1.0f,j+1.0f,k+0.0f,(byte) (bcolr[bid]*vcol[3]),(byte) (bcolg[bid]*vcol[3]),(byte) (bcolb[bid]*vcol[3]),(byte) 1,vboDataAL,vboDataALE);
+							vertexToAL(i+0.0f,j+1.0f,k+0.0f,(byte) (bcolr[bid]*vcol[4]),(byte) (bcolg[bid]*vcol[4]),(byte) (bcolb[bid]*vcol[4]),(byte) 1,vboDataAL,vboDataALE);
+							vertexToAL(i+0.0f,j+1.0f,k+1.0f,(byte) (bcolr[bid]*vcol[7]),(byte) (bcolg[bid]*vcol[7]),(byte) (bcolb[bid]*vcol[7]),(byte) 1,vboDataAL,vboDataALE);
+							vertexToAL(i+1.0f,j+1.0f,k+1.0f,(byte) (bcolr[bid]*vcol[0]),(byte) (bcolg[bid]*vcol[0]),(byte) (bcolb[bid]*vcol[0]),(byte) 1,vboDataAL,vboDataALE);
 						}
 						if (dircol[5]) { //-z axis stable
-							vertexToAL(i+1.0f,j+0.0f,k+0.0f,vcol[2],vcol[2],vcol[2],vcol[1],vboDataAL,vboDataALE);
-							vertexToAL(i+0.0f,j+0.0f,k+0.0f,vcol[5],vcol[5],vcol[5],vcol[1],vboDataAL,vboDataALE);
-							vertexToAL(i+0.0f,j+1.0f,k+0.0f,vcol[4],vcol[4],vcol[4],vcol[1],vboDataAL,vboDataALE);
-							vertexToAL(i+1.0f,j+1.0f,k+0.0f,vcol[3],vcol[3],vcol[3],vcol[1],vboDataAL,vboDataALE);
+							vertexToAL(i+1.0f,j+0.0f,k+0.0f,(byte) (bcolr[bid]*vcol[2]),(byte) (bcolg[bid]*vcol[2]),(byte) (bcolb[bid]*vcol[2]),(byte) 1,vboDataAL,vboDataALE);
+							vertexToAL(i+0.0f,j+0.0f,k+0.0f,(byte) (bcolr[bid]*vcol[5]),(byte) (bcolg[bid]*vcol[5]),(byte) (bcolb[bid]*vcol[5]),(byte) 1,vboDataAL,vboDataALE);
+							vertexToAL(i+0.0f,j+1.0f,k+0.0f,(byte) (bcolr[bid]*vcol[4]),(byte) (bcolg[bid]*vcol[4]),(byte) (bcolb[bid]*vcol[4]),(byte) 1,vboDataAL,vboDataALE);
+							vertexToAL(i+1.0f,j+1.0f,k+0.0f,(byte) (bcolr[bid]*vcol[3]),(byte) (bcolg[bid]*vcol[3]),(byte) (bcolb[bid]*vcol[3]),(byte) 1,vboDataAL,vboDataALE);
 						}
 						if (dircol[3]) { //-y axis stable
-							vertexToAL(i+1.0f,j+0.0f,k+1.0f,vcol[1],vcol[1],vcol[1],vcol[1],vboDataAL,vboDataALE);
-							vertexToAL(i+0.0f,j+0.0f,k+1.0f,vcol[6],vcol[6],vcol[6],vcol[1],vboDataAL,vboDataALE);
-							vertexToAL(i+0.0f,j+0.0f,k+0.0f,vcol[5],vcol[5],vcol[5],vcol[1],vboDataAL,vboDataALE);
-							vertexToAL(i+1.0f,j+0.0f,k+0.0f,vcol[2],vcol[2],vcol[2],vcol[1],vboDataAL,vboDataALE);
+							vertexToAL(i+1.0f,j+0.0f,k+1.0f,(byte) (bcolr[bid]*vcol[1]),(byte) (bcolg[bid]*vcol[1]),(byte) (bcolb[bid]*vcol[1]),(byte) 1,vboDataAL,vboDataALE);
+							vertexToAL(i+0.0f,j+0.0f,k+1.0f,(byte) (bcolr[bid]*vcol[6]),(byte) (bcolg[bid]*vcol[6]),(byte) (bcolb[bid]*vcol[6]),(byte) 1,vboDataAL,vboDataALE);
+							vertexToAL(i+0.0f,j+0.0f,k+0.0f,(byte) (bcolr[bid]*vcol[5]),(byte) (bcolg[bid]*vcol[5]),(byte) (bcolb[bid]*vcol[5]),(byte) 1,vboDataAL,vboDataALE);
+							vertexToAL(i+1.0f,j+0.0f,k+0.0f,(byte) (bcolr[bid]*vcol[2]),(byte) (bcolg[bid]*vcol[2]),(byte) (bcolb[bid]*vcol[2]),(byte) 1,vboDataAL,vboDataALE);
 						}
 						if (dircol[4]) { //+z axis stable
-							vertexToAL(i+1.0f,j+1.0f,k+1.0f,vcol[0],vcol[0],vcol[0],vcol[1],vboDataAL,vboDataALE);
-							vertexToAL(i+0.0f,j+1.0f,k+1.0f,vcol[7],vcol[7],vcol[7],vcol[1],vboDataAL,vboDataALE);
-							vertexToAL(i+0.0f,j+0.0f,k+1.0f,vcol[6],vcol[6],vcol[6],vcol[1],vboDataAL,vboDataALE);
-							vertexToAL(i+1.0f,j+0.0f,k+1.0f,vcol[1],vcol[1],vcol[1],vcol[1],vboDataAL,vboDataALE);
+							vertexToAL(i+1.0f,j+1.0f,k+1.0f,(byte) (bcolr[bid]*vcol[0]),(byte) (bcolg[bid]*vcol[0]),(byte) (bcolb[bid]*vcol[0]),(byte) 1,vboDataAL,vboDataALE);
+							vertexToAL(i+0.0f,j+1.0f,k+1.0f,(byte) (bcolr[bid]*vcol[7]),(byte) (bcolg[bid]*vcol[7]),(byte) (bcolb[bid]*vcol[7]),(byte) 1,vboDataAL,vboDataALE);
+							vertexToAL(i+0.0f,j+0.0f,k+1.0f,(byte) (bcolr[bid]*vcol[6]),(byte) (bcolg[bid]*vcol[6]),(byte) (bcolb[bid]*vcol[6]),(byte) 1,vboDataAL,vboDataALE);
+							vertexToAL(i+1.0f,j+0.0f,k+1.0f,(byte) (bcolr[bid]*vcol[1]),(byte) (bcolg[bid]*vcol[1]),(byte) (bcolb[bid]*vcol[1]),(byte) 1,vboDataAL,vboDataALE);
 						}//*/
 					}
 				}

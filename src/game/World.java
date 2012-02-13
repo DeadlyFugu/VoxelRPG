@@ -21,14 +21,6 @@ public class World {
 	public World(Input input, Player player) {
 		this.input = input;
 		this.player = player;
-		allChunks.add(new Chunk(0, 0));
-		allChunks.add(new Chunk(1, 0));
-		allChunks.add(new Chunk(0, 1));
-		allChunks.add(new Chunk(1, 1));
-		activeChunks.add(allChunks.get(0));
-		activeChunks.add(allChunks.get(1));
-		activeChunks.add(allChunks.get(2));
-		activeChunks.add(allChunks.get(3));
 	}
 	
 	public void update() {
