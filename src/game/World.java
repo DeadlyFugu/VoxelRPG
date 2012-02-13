@@ -22,7 +22,13 @@ public class World {
 		this.input = input;
 		this.player = player;
 		allChunks.add(new Chunk(0, 0));
+		allChunks.add(new Chunk(1, 0));
+		allChunks.add(new Chunk(0, 1));
+		allChunks.add(new Chunk(1, 1));
 		activeChunks.add(allChunks.get(0));
+		activeChunks.add(allChunks.get(1));
+		activeChunks.add(allChunks.get(2));
+		activeChunks.add(allChunks.get(3));
 	}
 	
 	public void update() {
@@ -32,6 +38,35 @@ public class World {
 		
 		for (Entity e : entities) {
 			e.update();
+		}
+		
+		int pcx = (int) (player.x/32);
+		int pcy = (int) (player.y/32);
+		
+		Chunk[] suitableChunksFound = {null,null,null,null,null,null,null,null,null};
+		for (Chunk c : allChunks) {
+			if (c.x == pcx-1 && c.y == pcy-1) suitableChunksFound[0] = c;
+			else if (c.x == pcx-1 && c.y == pcy) suitableChunksFound[1] = c;
+			else if (c.x == pcx-1 && c.y == pcy+1) suitableChunksFound[2] = c;
+
+			else if (c.x == pcx && c.y == pcy-1) suitableChunksFound[3] = c;
+			else if (c.x == pcx && c.y == pcy) suitableChunksFound[4] = c;
+			else if (c.x == pcx && c.y == pcy+1) suitableChunksFound[5] = c;
+			
+			else if (c.x == pcx+1 && c.y == pcy-1) suitableChunksFound[6] = c;
+			else if (c.x == pcx+1 && c.y == pcy) suitableChunksFound[7] = c;
+			else if (c.x == pcx+1 && c.y == pcy+1) suitableChunksFound[8] = c;
+		}
+		
+		for (int i=0; i<9; i++) {
+			if (suitableChunksFound[i] != null) {
+				if (!activeChunks.contains(suitableChunksFound[i])) {
+					activeChunks.add(suitableChunksFound[i]);
+				}
+			} else {
+				allChunks.add(new Chunk((int) (pcx+(Math.floor(i/3))-1),pcy+(i%3)-1));
+				activeChunks.add(allChunks.get(allChunks.size()-1));
+			}
 		}
 		
 		for (Chunk c : activeChunks) {

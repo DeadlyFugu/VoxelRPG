@@ -15,6 +15,7 @@ import java.nio.ByteOrder;
 import java.nio.IntBuffer;
 import java.nio.FloatBuffer;
 
+import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.DisplayMode;
 import org.lwjgl.opengl.GL11;
@@ -149,12 +150,20 @@ public class Game {
 	private void initGL() {
 		GL11.glEnable(GL11.GL_TEXTURE_2D); // Enable Texture Mapping
 		GL11.glShadeModel(GL11.GL_SMOOTH); // Enable Smooth Shading
-		GL11.glClearColor(0.0f, 0.0f, 0.0f, 0.0f); // Black Background
+		GL11.glClearColor(0.8f, 0.9f, 0.95f, 1.0f); // Black Background
 		GL11.glClearDepth(1.0f); // Depth Buffer Setup
 		//GL11.glEnable(GL11.GL_CULL_FACE);
 		//GL11.glCullFace(GL11.GL_BACK);
 		GL11.glEnable(GL11.GL_DEPTH_TEST); // Enables Depth Testing
 		GL11.glDepthFunc(GL11.GL_LEQUAL); // The Type Of Depth Testing To Do
+		
+		GL11.glEnable(GL11.GL_FOG); //Fog
+	    GL11.glFogf(GL11.GL_FOG_MODE,GL11.GL_LINEAR);
+	    GL11.glFogf(GL11.GL_FOG_START,10.0f);
+	    GL11.glFogf(GL11.GL_FOG_END,100.0f);
+	    FloatBuffer fogColor = BufferUtils.createFloatBuffer(4);
+	    fogColor.put(new float [] {0.8f,0.9f,0.95f,1.0f}).rewind();
+	    GL11.glFog(GL11.GL_FOG_COLOR, fogColor);
 
 		GL11.glMatrixMode(GL11.GL_PROJECTION); // Select The Projection Matrix
 		GL11.glLoadIdentity(); // Reset The Projection Matrix

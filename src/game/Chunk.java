@@ -152,7 +152,7 @@ public class Chunk {
 		for (int i=0; i<32; i++) {
 			for (int j=0; j<32; j++) {
 				//heightMap[i][j] = (byte) (FastNoise.noise(i*2, j*2, 10));
-				heightMap[i][j] = (byte) (12+PerlinNoise.pNoise(i*0.1, j*0.1, 0.3, 2)*20);
+				heightMap[i][j] = (byte) (32+PerlinNoise.pNoise((x*32+i)*0.1, (y*32+j)*0.1, 0.3, 2)*32);
 			}
 		}
 		/*for (int i=0; i<32; i++) {
@@ -181,12 +181,13 @@ public class Chunk {
 
 	public void render() {
 		//GL11.glDrawArrays(mode, first, count)
-		System.out.println("Chunk is rendering");
+		System.out.println("Chunk is rendering"+x);
 
 		GL11.glPushMatrix();
 		
 		GL11.glRotated(90, 1, 0, 0);
 		GL11.glScaled(1, 1, -1);
+		GL11.glTranslated(x*32,y*32,0);
 
 		//GL11.glColor3d(0.5,0,0);
 

@@ -1,6 +1,6 @@
 package game;
 
-import org.lwjgl.input.Keyboard;
+import org.lwjgl.opengl.GL11;
 
 public class Player {
 	private World world;
@@ -19,6 +19,15 @@ public class Player {
 			//Jump!
 		}
 		
+		GL11.glPushMatrix();
+		GL11.glTranslatef(x, z, y);
+		GL11.glBegin(GL11.GL_QUADS);
+		GL11.glVertex3d(-0.5, -1, 0);
+		GL11.glVertex3d(0.5, -1, 0);
+		GL11.glVertex3d(0.5, 0, 0);
+		GL11.glVertex3d(-0.5, 0, 0);
+		GL11.glEnd();
+		GL11.glPopMatrix();
 	}
 	
 	public World getWorld() {
