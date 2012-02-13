@@ -43,7 +43,7 @@ public class Chunk {
 		byte[] bcolr = {0,60};
 		byte[] bcolg = {0,120};
 		byte[] bcolb = {0,20};
-		double shadeLevel = 0.2;
+		double shadeLevel = 0.15;
 		for (int  i=0; i<width; i++) {
 			for (int  j=0; j<width; j++) {
 				for (int  k=0; k<height; k++) {
@@ -58,7 +58,7 @@ public class Chunk {
 						//if (dircol[2]) System.out.println("Yes"); else System.out.println("Nope");
 						//System.out.println((int) chunkData[i][j][k])
 						//Bottomright,bottomleft, topleft, topright
-						double[] vcol = {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1};
+						double[] vcol = {0.8,0.8,0.8,0.8,0.7,0.7,0.7,0.7,0.8,0.8,0.8,0.8,0.6,0.6,0.6,0.6,0.8,0.8,0.8,0.8,1,1,1,1};
 						if (i!= 0 && i!= 31 && j!= 0 && j!= 31 && k!= 0 && k!= 63) {
 							//+Z axis
 							if (chunkData[i][j][k+1] == 0) {
