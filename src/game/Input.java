@@ -50,9 +50,9 @@ public class Input {
 		else cty = 0;
 		
 	    ax += (atx-ax)/10;
-	    ax += (atx-ax)/10;
-	    ax += (atx-ax)/10;
-	    ax += (atx-ax)/10;
+	    ay += (atx-ay)/10;
+	    cx += (ctx-cx)/10;
+	    cy += (cty-cy)/10;
 	}
 	
 	public void writeConfigToFile(String filename) {

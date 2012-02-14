@@ -34,8 +34,8 @@ public class World {
 			e.update();
 		}
 		
-		int pcx = (int) (camera.cp[0]/32);
-		int pcy = (int) (camera.cp[2]/32);
+		int pcx = (int) (camera.x/32);
+		int pcy = (int) (camera.y/32);
 		
 		Chunk[] suitableChunksFound = {null,null,null,null,null,null,null,null,null};
 		for (Chunk c : allChunks) {
