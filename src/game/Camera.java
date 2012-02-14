@@ -18,19 +18,23 @@ public class Camera {
 	public Camera(Input input, Player player) {
 		this.input = input;
 		this.player = player;
-		x = player.x-10;
-		y = player.y;
-		z = player.z-4;
 		yaw = 1;
 		zoom = 10;
+		x = tx = (float) (player.x+(zoom*MathEXT.cosd(yaw)));
+		y = ty = (float) (player.y-(zoom*MathEXT.sind(yaw)));
+		z = tz = player.z+zoom/2;
 	}
 	
 	public void updateView() {
 		
-		x = (float) (player.x+(zoom*MathEXT.cosd(yaw)));
-		y = (float) (player.y-(zoom*MathEXT.sind(yaw)));
-		z = player.z+4;
+		tx = (float) (player.x+(zoom*MathEXT.cosd(yaw)));
+		ty = (float) (player.y-(zoom*MathEXT.sind(yaw)));
+		tz = player.z+zoom/2;
 		
+	    x += (tx-x)/10;
+	    y += (ty-y)/10;
+	    z += (tz-z)/10;
+	    
 		yaw+=input.ax*2;
 		zoom = Math.min(Math.max(zoom+input.cy/4,3),20);
 		

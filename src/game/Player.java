@@ -18,6 +18,11 @@ public class Player {
 	}
 	
 	public void update(Input input) {
+		if (input.isKeyPressed("Sprint")) {
+			mvspd = 0.2f;
+		} else {
+			mvspd = 0.1f;
+		}
 		if (world.placeFree(x,y,z-0.1f)) {
 			z-= 0.1;
 		}//*/
