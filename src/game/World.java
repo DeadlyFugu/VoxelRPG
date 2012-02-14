@@ -67,4 +67,22 @@ public class World {
 			c.render();
 		}
 	}
+	
+	public boolean placeFree(float i, float j, float k) {
+		return placeFree((int) i, (int) j, (int) k);
+	}
+
+	public boolean placeFree(int i, int j, int k) {
+		// TODO Auto-generated method stub
+		int cxp = (int) Math.floor(i/32);
+		int cyp = (int) Math.floor(j/32);
+		for (Chunk c : activeChunks) {
+			if (c.x == cxp && c.y == cyp) {
+				System.out.println("placeFree called on loaded chunk at "+cxp+","+cyp+" "+i%32+","+j%32+","+k%64+" ="+c.chunkData[i%32][j%32][k]);
+				return c.chunkData[i%32][j%32][k%64] == 0;
+			}
+		}
+		System.out.println("placeFree called on unloaded chunk at "+cxp+","+cyp);
+		return false;
+	}
 }

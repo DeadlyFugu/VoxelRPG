@@ -24,19 +24,19 @@ public class Camera {
 	
 	public void updateView() {
 		
-		if (input.isKeyPressed("Up")) {
+		if (input.isKeyPressed("CamUp")) {
 			cp[0] += 0.3;
 			cp[2] += 0.3;
 		}
-		if (input.isKeyPressed("Down")) {
+		if (input.isKeyPressed("CamDown")) {
 			cp[0] -= 0.3;
 			cp[2] -= 0.3;
 		}
-		if (input.isKeyPressed("Right")) {
+		if (input.isKeyPressed("CamRight")) {
 			cp[0] -= 0.3;
 			cp[2] += 0.3;
 		}
-		if (input.isKeyPressed("Left")) {
+		if (input.isKeyPressed("CamLeft")) {
 			cp[0] += 0.3;
 			cp[2] -= 0.3;
 		}
