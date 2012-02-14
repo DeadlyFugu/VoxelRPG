@@ -31,8 +31,10 @@ public class Camera {
 		y = (float) (player.y-(zoom*MathEXT.sind(yaw)));
 		z = player.z+4;
 		
-		yaw+=input.cx;
-		zoom += input.cy;
+		yaw+=input.ax*2;
+		zoom = Math.min(Math.max(zoom+input.cy/4,3),20);
+		
+		player.kfc = (float) MathEXT.point_direction(x, y, player.x, player.y);
 		
 		/*if (input.isKeyPressed("CamUp")) {
 			cp[0] += 0.3;
