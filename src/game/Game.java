@@ -45,7 +45,6 @@ public class Game {
 	private boolean done = false;
 	private boolean fullscreen = false;
 	private final String windowTitle = "VoxelRPG";
-	private boolean f1 = false;
 	private DisplayMode displayMode;
 
 	private Input input;
@@ -64,7 +63,7 @@ public class Game {
 		Game game = new Game();
 		game.run(fullscreen);
 	}
-	
+
 	public void run(boolean fullscreen) {
 		this.fullscreen = fullscreen;
 		try {
@@ -89,13 +88,6 @@ public class Game {
 		if(Display.isCloseRequested()) {                     // Exit if window is closed
 			done = true;
 		}
-		if(Keyboard.isKeyDown(Keyboard.KEY_F1) && !f1) {    // Is F1 Being Pressed?
-			f1 = true;                                      // Tell Program F1 Is Being Held
-			switchMode();                                   // Toggle Fullscreen / Windowed Mode
-		}
-		if(!Keyboard.isKeyDown(Keyboard.KEY_F1)) {          // Is F1 Being Pressed?
-			f1 = false;
-		}
 	}
 
 	private void switchMode() {
@@ -112,24 +104,29 @@ public class Game {
 		GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);          // Clear The Screen And The Depth Buffer
 
 		GL11.glLoadIdentity();                          // Reset The Current Modelview Matrix
-		
+
 		input.updateAxis();
 		camera.updateView();
-		
+
 		world.update();
-		
+
 		return true;
 	}
 	private void createWindow() throws Exception {
 		Display.setFullscreen(fullscreen);
-		DisplayMode d[] = Display.getAvailableDisplayModes();
-		for (int i = 0; i < d.length; i++) {
-			if (d[i].getWidth() == 1280
-					&& d[i].getHeight() == 960
-					&& d[i].getBitsPerPixel() == 16) {
-				displayMode = d[i];
-				break;
+		if (!fullscreen) {
+			DisplayMode d[] = Display.getAvailableDisplayModes();
+			for (int i = 0; i < d.length; i++) {
+				System.out.println(d[i].toString());
+				if (d[i].getWidth() == 1280
+						&& d[i].getHeight() == 960
+						&& d[i].getBitsPerPixel() == 32) {
+					displayMode = d[i];
+					break;
+				}
 			}
+		} else {
+			displayMode = Display.getDesktopDisplayMode();
 		}
 		Display.setDisplayMode(displayMode);
 		Display.setTitle(windowTitle);
@@ -140,7 +137,7 @@ public class Game {
 		createWindow();
 
 		initGL();
-		
+
 		input = new Input();
 		player = new Player();
 		camera = new Camera(input,player);
@@ -157,26 +154,26 @@ public class Game {
 		//GL11.glCullFace(GL11.GL_BACK);
 		GL11.glEnable(GL11.GL_DEPTH_TEST); // Enables Depth Testing
 		GL11.glDepthFunc(GL11.GL_LEQUAL); // The Type Of Depth Testing To Do
-		
+
 		GL11.glEnable(GL11.GL_FOG); //Fog
-	    GL11.glFogf(GL11.GL_FOG_MODE,GL11.GL_LINEAR);
-	    GL11.glFogf(GL11.GL_FOG_START,10.0f);
-	    GL11.glFogf(GL11.GL_FOG_END,100.0f);
-	    FloatBuffer fogColor = BufferUtils.createFloatBuffer(4);
-	    fogColor.put(new float [] {0.8f,0.9f,0.95f,1.0f}).rewind();
-	    GL11.glFog(GL11.GL_FOG_COLOR, fogColor);
+		GL11.glFogf(GL11.GL_FOG_MODE,GL11.GL_LINEAR);
+		GL11.glFogf(GL11.GL_FOG_START,10.0f);
+		GL11.glFogf(GL11.GL_FOG_END,100.0f);
+		FloatBuffer fogColor = BufferUtils.createFloatBuffer(4);
+		fogColor.put(new float [] {0.8f,0.9f,0.95f,1.0f}).rewind();
+		GL11.glFog(GL11.GL_FOG_COLOR, fogColor);
 
 		GL11.glMatrixMode(GL11.GL_PROJECTION); // Select The Projection Matrix
 		GL11.glLoadIdentity(); // Reset The Projection Matrix
 
 		// Calculate The Aspect Ratio Of The Window
-		GLU.gluPerspective(45.0f, (float) displayMode.getWidth() / (float) displayMode.getWidth(),0.1f,100.0f);
+		GLU.gluPerspective(45.0f, 1.6f,0.1f,100.0f);
 		GL11.glMatrixMode(GL11.GL_MODELVIEW); // Select The Modelview Matrix
 
 		// Really Nice Perspective Calculations
 		GL11.glHint(GL11.GL_PERSPECTIVE_CORRECTION_HINT, GL11.GL_NICEST);
-		
-		
+
+
 		//Check to see if required extensions are supported
 		if (GLContext.getCapabilities().GL_ARB_vertex_buffer_object) {
 			System.out.println("GL VBOs are supported! :D");
@@ -184,7 +181,7 @@ public class Game {
 			System.out.println("GL VBOs aren't supported! D:");
 			System.exit(1);
 		}
-		
+
 	}
 	private void cleanup() {
 		Display.destroy();

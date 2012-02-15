@@ -37,7 +37,7 @@ public class World {
 		int pcx = (int) (camera.x/32);
 		int pcy = (int) (camera.y/32);
 		
-		Chunk[] suitableChunksFound = {null,null,null,null,null,null,null,null,null};
+		Chunk[] suitableChunksFound = {null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null};
 		for (Chunk c : allChunks) {
 			/*if (c.x == pcx-1 && c.y == pcy-1) suitableChunksFound[0] = c;
 			else if (c.x == pcx-1 && c.y == pcy) suitableChunksFound[1] = c;
@@ -50,21 +50,21 @@ public class World {
 			else if (c.x == pcx+1 && c.y == pcy-1) suitableChunksFound[6] = c;
 			else if (c.x == pcx+1 && c.y == pcy) suitableChunksFound[7] = c;
 			else if (c.x == pcx+1 && c.y == pcy+1) suitableChunksFound[8] = c;//*/
-			System.out.println(c.x+" "+c.y+" "+((pcx-c.x+1)*3+(pcy-c.y+1)));
-			if (c.x > pcx-2 && c.y > pcy-2 && c.x < pcx+2 && c.y < pcy+2) suitableChunksFound[((c.x-pcx+1)*3+(c.y-pcy+1))] = c;
-			/*else if (activeChunks.contains(c)) {
+			//System.out.println(c.x+" "+c.y+" "+((pcx-c.x+1)*3+(pcy-c.y+1)));
+			if (c.x > pcx-3 && c.y > pcy-3 && c.x < pcx+3 && c.y < pcy+3) suitableChunksFound[((c.x-pcx+2)*5+(c.y-pcy+2))] = c;
+			else if (activeChunks.contains(c)) {
 				activeChunks.remove(c);
 			}//*/
 		}
 		
-		for (int i=0; i<9; i++) {
+		for (int i=0; i<25; i++) {
 			if (suitableChunksFound[i] != null) {
 				if (!activeChunks.contains(suitableChunksFound[i])) {
 					activeChunks.add(suitableChunksFound[i]);
 				}
 			} else {
 				System.out.println("New chunk added");
-				allChunks.add(new Chunk((int) (pcx+(Math.floor(i/3))-1),pcy+(i%3)-1));
+				allChunks.add(new Chunk((int) (pcx+(Math.floor(i/5))-2),pcy+(i%5)-2));
 				activeChunks.add(allChunks.get(allChunks.size()-1));
 			}
 		}
@@ -84,11 +84,11 @@ public class World {
 		int cyp = (int) Math.floor(j/32);
 		for (Chunk c : activeChunks) {
 			if (c.x == cxp && c.y == cyp) {
-				System.out.println("placeFree called on loaded chunk at "+cxp+","+cyp+" "+i%32+","+j%32+","+k%64+" ="+c.chunkData[i%32][j%32][k]);
+				//System.out.println("placeFree called on loaded chunk at "+cxp+","+cyp+" "+i%32+","+j%32+","+k%64+" ="+c.chunkData[i%32][j%32][k]);
 				return c.chunkData[i%32][j%32][k%64] == 0;
 			}
 		}
-		System.out.println("placeFree called on unloaded chunk at "+cxp+","+cyp);
+		//System.out.println("placeFree called on unloaded chunk at "+cxp+","+cyp);
 		return false;
 	}
 }

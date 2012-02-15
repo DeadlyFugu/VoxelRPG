@@ -3,18 +3,35 @@ package game;
 import java.io.*;
 import java.util.HashMap;
 
+import org.lwjgl.LWJGLException;
 import org.lwjgl.input.Keyboard;
+import org.lwjgl.input.Controller;
+import org.lwjgl.input.Controllers;
+import org.lwjgl.util.input.ControllerAdapter;
 
 
 public class Input {
 	HashMap<String, Integer> keyConfig = new HashMap<String,Integer>();
 	public float ax,ay,cx,cy;
 	private float atx,aty,ctx,cty;
-	
+	private boolean emulatedAxis;
+	private Controller controller;
+
 	public Input() {
 		readFromConfigFile("config.txt");
 		ax = 0; ay = 0;
 		cx = 0; cy = 0;
+		try {
+			Controllers.create();
+		} catch (LWJGLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		if (Controllers.getControllerCount() > 0) {
+			controller = Controllers.getController(0);
+			System.out.println("Joystick has "+controller.getButtonCount() +" buttons. Its name is "+controller.getName());
+		}
+		emulatedAxis = (Controllers.getControllerCount() == 0);
 	}
 	
 	public boolean isKeyPressed(String key) {
@@ -35,6 +52,7 @@ public class Input {
 	}
 	
 	public void updateAxis() {
+		if (emulatedAxis) {
 		if (isKeyPressed("Right")) atx = 1;
 		else if (isKeyPressed("Left")) atx = -1;
 		else atx = 0;
@@ -48,6 +66,13 @@ public class Input {
 		if (isKeyPressed("CamDown")) cty = 1;
 		else if (isKeyPressed("CamUp")) cty = -1;
 		else cty = 0;
+		} else {
+			controller.poll();
+			atx = controller.getXAxisValue();
+			aty = -controller.getYAxisValue();
+			ctx = controller.getZAxisValue();
+			cty = controller.getRZAxisValue();
+		}
 		
 	    ax += (atx-ax)/10;
 	    ay += (aty-ay)/10;
