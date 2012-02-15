@@ -20,6 +20,7 @@ public class Player {
 		py = y;
 		dir = 0;
 		mvspd = 0.1f;
+		zspd = 0;
 	}
 	
 	public void setCam(Camera cam) {
@@ -28,15 +29,21 @@ public class Player {
 	
 	public void update(Input input) {
 		if (input.isKeyPressed("Sprint")) {
-			mvspd = 0.2f;
+			mvspd = 0.3f;
 		} else {
-			mvspd = 0.1f;
+			mvspd = 0.15f;
 		}
 		if (world.placeFree(x,y,z-0.1f)) {
-			z-= 0.1;
+			zspd -= 0.01;
 		}//*/
-		if (input.isKeyPressed("Jump")) {
-			//Jump!
+		if (input.isKeyPressed("Jump") && !world.placeFree(x, y, z-0.1f)) {
+			zspd = 0.25f;
+		}
+		
+		if (world.placeFree(x,y,z+zspd)) {
+			z += zspd;
+		}  else {
+			zspd = 0;
 		}
 		/*if (input.isKeyPressed("Left")) {
 			if (world.placeFree(x+0.1f, y, z)) {
@@ -60,6 +67,15 @@ public class Player {
 		px = x;
 		py = y;
 		
+		/*if (world.placeFree((float) (x+(input.ay*mvspd*MathEXT.cosd(kfc))),(float) (y-(input.ay*mvspd*MathEXT.sind(kfc))), z)) {
+			x=(float) (x+(input.ay*mvspd*MathEXT.cosd(kfc)));
+			y=(float) (y-(input.ay*mvspd*MathEXT.sind(kfc)));
+
+		} else if (world.placeFree((float) (x+(input.ay*mvspd*MathEXT.cosd(kfc))),(float) (y-(input.ay*mvspd*MathEXT.sind(kfc))), z+1)) {
+			x=(float) (x+(input.ay*mvspd*MathEXT.cosd(kfc)));
+			y=(float) (y-(input.ay*mvspd*MathEXT.sind(kfc)));
+			z+=1;
+		}*/
 		if (world.placeFree((float) (x+(input.ay*mvspd*MathEXT.cosd(kfc))),(float) (y-(input.ay*mvspd*MathEXT.sind(kfc))), z)) {
 			x=(float) (x+(input.ay*mvspd*MathEXT.cosd(kfc)));
 			y=(float) (y-(input.ay*mvspd*MathEXT.sind(kfc)));
@@ -80,7 +96,9 @@ public class Player {
 			z+=1;
 		}
 		
-		dir = kfc-(float) MathEXT.point_direction(0,0,input.ax,input.ay)-90;
+		System.out.println(x+" "+y+" "+Math.floor(x/32)+" "+Math.floor(y/32));
+		
+		if (Math.floor(px*100) != Math.floor(x*100) && Math.floor(py*100) != Math.floor(y*100)) dir = kfc-(float) MathEXT.point_direction(0,0,input.ax,input.ay)-90;
 		
 		GL11.glPushMatrix();
 		GL11.glTranslatef(x, z, y);

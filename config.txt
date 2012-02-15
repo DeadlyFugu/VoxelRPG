@@ -6,6 +6,10 @@ Jump,44
 Sprint,45
 Weapon1,30
 Weapon2,31
+JoyJump,0
+JoySprint,1
+JoyWeapon1,2
+JoyWeapon2,3
 CamUp,23
 CamDown,37
 CamLeft,36

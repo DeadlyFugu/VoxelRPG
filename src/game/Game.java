@@ -10,16 +10,21 @@ package game;
  *      Visit My Site At nehe.gamedev.net
  */
 
+import java.io.BufferedReader;
+import java.io.FileReader;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.IntBuffer;
 import java.nio.FloatBuffer;
 
 import org.lwjgl.BufferUtils;
+import org.lwjgl.opengl.ARBVertexShader;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.DisplayMode;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GLContext;
+import org.lwjgl.opengl.ARBShaderObjects;
+import org.lwjgl.opengl.ARBFragmentShader;
 import org.lwjgl.util.glu.GLU;
 import org.lwjgl.input.Keyboard;
 
@@ -51,6 +56,11 @@ public class Game {
 	private World world;
 	private Player player;
 	private Camera camera;
+
+	private int shader;
+	private int vertShader;
+	private int fragShader;
+	private boolean useShader = true;
 
 	public static void main(String args[]) {
 		boolean fullscreen = false;
@@ -118,8 +128,8 @@ public class Game {
 			DisplayMode d[] = Display.getAvailableDisplayModes();
 			for (int i = 0; i < d.length; i++) {
 				System.out.println(d[i].toString());
-				if (d[i].getWidth() == 1280
-						&& d[i].getHeight() == 960
+				if (d[i].getWidth() == 1600
+						&& d[i].getHeight() == 900
 						&& d[i].getBitsPerPixel() == 32) {
 					displayMode = d[i];
 					break;
@@ -167,22 +177,134 @@ public class Game {
 		GL11.glLoadIdentity(); // Reset The Projection Matrix
 
 		// Calculate The Aspect Ratio Of The Window
-		GLU.gluPerspective(45.0f, 1.6f,0.1f,100.0f);
+		GLU.gluPerspective(45.0f, 1.78f,0.1f,100.0f);
 		GL11.glMatrixMode(GL11.GL_MODELVIEW); // Select The Modelview Matrix
 
 		// Really Nice Perspective Calculations
 		GL11.glHint(GL11.GL_PERSPECTIVE_CORRECTION_HINT, GL11.GL_NICEST);
 
+		/*
+		 * create the shader program. If OK, create vertex
+		 * and fragment shaders
+		 */
+		shader=ARBShaderObjects.glCreateProgramObjectARB();
+
+		if(shader!=0){
+			vertShader=createVertShader("shaders/screen.vsh");
+			fragShader=createFragShader("shaders/screen.fsh");
+		}
+		else useShader=false;
+
+		/*
+		 * if the vertex and fragment shaders setup sucessfully,
+		 * attach them to the shader program, link the sahder program
+		 * (into the GL context I suppose), and validate
+		 */
+		if(vertShader !=0 && fragShader !=0){
+			ARBShaderObjects.glAttachObjectARB(shader, vertShader);
+			ARBShaderObjects.glAttachObjectARB(shader, fragShader);
+			ARBShaderObjects.glLinkProgramARB(shader);
+			ARBShaderObjects.glValidateProgramARB(shader);
+			useShader=printLogInfo(shader);
+		}else useShader=false;
+		
+		if(useShader) {
+			ARBShaderObjects.glUseProgramObjectARB(shader);
+			System.out.println("hhh");
+		}
 
 		//Check to see if required extensions are supported
-		if (GLContext.getCapabilities().GL_ARB_vertex_buffer_object) {
+		if (GLContext.getCapabilities().GL_ARB_vertex_buffer_object){
 			System.out.println("GL VBOs are supported! :D");
 		} else {
 			System.out.println("GL VBOs aren't supported! D:");
 			System.exit(1);
 		}
-
 	}
+
+	/*
+	 * With the exception of syntax, setting up vertex and fragment shaders
+	 * is the same.
+	 * @param the name and path to the vertex shader
+	 */
+	private int createVertShader(String filename){
+		//vertShader will be non zero if succefully created
+
+		vertShader=ARBShaderObjects.glCreateShaderObjectARB(ARBVertexShader.GL_VERTEX_SHADER_ARB);
+		//if created, convert the vertex shader code to a String
+		if(vertShader==0){return 0;}
+		String vertexCode="";
+		String line;
+		try{
+			BufferedReader reader=new BufferedReader(new FileReader(filename));
+			while((line=reader.readLine())!=null){
+				vertexCode+=line + "\n";
+				System.out.println(line);
+			}
+		}catch(Exception e){
+			System.out.println("Fail reading vertex shading code");
+			return 0;
+		}
+		/*
+		 * associate the vertex code String with the created vertex shader
+		 * and compile
+		 */
+		ARBShaderObjects.glShaderSourceARB(vertShader, vertexCode);
+		ARBShaderObjects.glCompileShaderARB(vertShader);
+		//if there was a problem compiling, reset vertShader to zero
+		if(!printLogInfo(vertShader)){
+			//vertShader=0;
+		}
+		//if zero we won't be using the shader
+		return vertShader;
+	}
+
+	//same as per the vertex shader except for method syntax
+	private int createFragShader(String filename){
+
+		fragShader=ARBShaderObjects.glCreateShaderObjectARB(ARBFragmentShader.GL_FRAGMENT_SHADER_ARB);
+		if(fragShader==0){return 0;}
+		String fragCode="";
+		String line;
+		try{
+			BufferedReader reader=new BufferedReader(new FileReader(filename));
+			while((line=reader.readLine())!=null){
+				fragCode+=line + "\n";
+			}
+		}catch(Exception e){
+			System.out.println("Fail reading fragment shading code");
+			return 0;
+		}
+		ARBShaderObjects.glShaderSourceARB(fragShader, fragCode);
+		ARBShaderObjects.glCompileShaderARB(fragShader);
+		if(!printLogInfo(fragShader)){
+			//fragShader=0;
+		}
+
+		return fragShader;
+	}
+
+	private static boolean printLogInfo(int obj){
+		System.out.println("lolnice");
+		IntBuffer iVal = BufferUtils.createIntBuffer(1);
+		ARBShaderObjects.glGetObjectParameterARB(obj,
+				ARBShaderObjects.GL_OBJECT_INFO_LOG_LENGTH_ARB, iVal);
+
+		int length = iVal.get();
+		if (length > 1) {
+			// We have some info we need to output.
+			ByteBuffer infoLog = BufferUtils.createByteBuffer(length);
+			iVal.flip();
+			ARBShaderObjects.glGetInfoLogARB(obj, iVal, infoLog);
+			byte[] infoBytes = new byte[length];
+			infoLog.get(infoBytes);
+			String out = new String(infoBytes);
+			System.out.println("Info log:\n"+out);
+		}
+		else return true;
+		return false;
+	}
+
 	private void cleanup() {
 		Display.destroy();
 	}

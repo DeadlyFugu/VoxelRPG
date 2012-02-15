@@ -202,45 +202,26 @@ public class Chunk {
 		byte[][] heightMap = new byte[32][32];
 		for (int i=0; i<32; i++) {
 			for (int j=0; j<32; j++) {
-				//heightMap[i][j] = (byte) (FastNoise.noise(i*2, j*2, 10));
 				heightMap[i][j] = (byte) (32+PerlinNoise.pNoise((x*32+i)*0.05, (y*32+j)*0.05, 0.3, 2)*32);
 			}
 		}
-		/*for (int i=0; i<32; i++) {
-			for (int j=0; j<32; j++) {
-				heightMap[i][j] = (byte) ((heightMap[Math.min(i+1,31)][j]+
-						heightMap[Math.max(i-1,0)][j]+
-						heightMap[j][Math.min(j+1,31)]+
-						heightMap[j][Math.max(j-1,0)])/8);
-			}
-		}//*/
 		for (int  i=0; i<width; i++) {
 			for (int  j=0; j<width; j++) {
 				for (int  k=0; k<height; k++) {
 					if (heightMap[i][j] > k) chunkData[i][j][k] = 1;
-					else chunkData[i][j][k] = 0;//*/
-					/*if (k < 13) {
-						if (FastNoise.noise(i, j, 14-k) != 0) chunkData[i][j][k] = 1; else chunkData[i][j][k] = 0;
-					} else {
-						chunkData[i][j][k] = 0;
-					}*/
-					//System.out.println(PerlinNoise.noise(i*100, j*100, k*100));
+					else chunkData[i][j][k] = 0;
 				}
 			}
 		}
 	}
 
 	public void render() {
-		//GL11.glDrawArrays(mode, first, count)
-		//System.out.println("Chunk is rendering"+x);
 
 		GL11.glPushMatrix();
 		
 		GL11.glRotated(90, 1, 0, 0);
 		GL11.glScaled(1, 1, -1);
 		GL11.glTranslated(x*32,y*32,0);
-
-		//GL11.glColor3d(0.5,0,0);
 
 		GL11.glEnableClientState(GL11.GL_VERTEX_ARRAY);
 		GL11.glEnableClientState(GL11.GL_COLOR_ARRAY);
@@ -250,8 +231,6 @@ public class Chunk {
 
 		ARBVertexBufferObject.glBindBufferARB(ARBVertexBufferObject.GL_ARRAY_BUFFER_ARB, vboidc);
 		GL11.glColorPointer(4, GL11.GL_BYTE, 0, 0);
-
-		//GL11.glVertexPointer(3,0,floatBuffer);
 
 		GL11.glDrawArrays(GL11.GL_QUADS, 0, floatBuffer.limit()/3);
 
