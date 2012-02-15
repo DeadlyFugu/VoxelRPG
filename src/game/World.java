@@ -37,9 +37,9 @@ public class World {
 		int pcx = (int) (camera.x/32);
 		int pcy = (int) (camera.y/32);
 		
-		Chunk[] suitableChunksFound = new Chunk[9];
+		Chunk[] suitableChunksFound = {null,null,null,null,null,null,null,null,null};
 		for (Chunk c : allChunks) {
-			if (c.x == pcx-1 && c.y == pcy-1) suitableChunksFound[0] = c;
+			/*if (c.x == pcx-1 && c.y == pcy-1) suitableChunksFound[0] = c;
 			else if (c.x == pcx-1 && c.y == pcy) suitableChunksFound[1] = c;
 			else if (c.x == pcx-1 && c.y == pcy+1) suitableChunksFound[2] = c;
 
@@ -49,10 +49,12 @@ public class World {
 			
 			else if (c.x == pcx+1 && c.y == pcy-1) suitableChunksFound[6] = c;
 			else if (c.x == pcx+1 && c.y == pcy) suitableChunksFound[7] = c;
-			else if (c.x == pcx+1 && c.y == pcy+1) suitableChunksFound[8] = c;
-			else if (activeChunks.contains(c)) {
+			else if (c.x == pcx+1 && c.y == pcy+1) suitableChunksFound[8] = c;//*/
+			System.out.println(c.x+" "+c.y+" "+((pcx-c.x+1)*3+(pcy-c.y+1)));
+			if (c.x > pcx-2 && c.y > pcy-2 && c.x < pcx+2 && c.y < pcy+2) suitableChunksFound[((c.x-pcx+1)*3+(c.y-pcy+1))] = c;
+			/*else if (activeChunks.contains(c)) {
 				activeChunks.remove(c);
-			}
+			}//*/
 		}
 		
 		for (int i=0; i<9; i++) {
@@ -61,6 +63,7 @@ public class World {
 					activeChunks.add(suitableChunksFound[i]);
 				}
 			} else {
+				System.out.println("New chunk added");
 				allChunks.add(new Chunk((int) (pcx+(Math.floor(i/3))-1),pcy+(i%3)-1));
 				activeChunks.add(allChunks.get(allChunks.size()-1));
 			}
