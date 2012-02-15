@@ -37,7 +37,7 @@ public class World {
 		int pcx = (int) (camera.x/32);
 		int pcy = (int) (camera.y/32);
 		
-		Chunk[] suitableChunksFound = {null,null,null,null,null,null,null,null,null};
+		Chunk[] suitableChunksFound = new Chunk[9];
 		for (Chunk c : allChunks) {
 			if (c.x == pcx-1 && c.y == pcy-1) suitableChunksFound[0] = c;
 			else if (c.x == pcx-1 && c.y == pcy) suitableChunksFound[1] = c;
@@ -50,6 +50,9 @@ public class World {
 			else if (c.x == pcx+1 && c.y == pcy-1) suitableChunksFound[6] = c;
 			else if (c.x == pcx+1 && c.y == pcy) suitableChunksFound[7] = c;
 			else if (c.x == pcx+1 && c.y == pcy+1) suitableChunksFound[8] = c;
+			else if (activeChunks.contains(c)) {
+				activeChunks.remove(c);
+			}
 		}
 		
 		for (int i=0; i<9; i++) {
