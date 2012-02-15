@@ -80,9 +80,7 @@ public class Player {
 			z+=1;
 		}
 		
-		if (px != x || py != y) {
-			dir = (float) MathEXT.point_direction(px/10000,py/10000,x/10000,y/10000);
-		}
+		dir = kfc-(float) MathEXT.point_direction(0,0,input.ax,input.ay)-90;
 		
 		GL11.glPushMatrix();
 		GL11.glTranslatef(x, z, y);
