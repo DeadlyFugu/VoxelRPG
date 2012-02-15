@@ -38,8 +38,8 @@ public class Input {
 		if (isKeyPressed("Right")) atx = 1;
 		else if (isKeyPressed("Left")) atx = -1;
 		else atx = 0;
-		if (isKeyPressed("Down")) aty = 1;
-		else if (isKeyPressed("Up")) aty = -1;
+		if (isKeyPressed("Down")) aty = -1;
+		else if (isKeyPressed("Up")) aty = 1;
 		else aty = 0;
 		
 		if (isKeyPressed("CamRight")) ctx = 1;
@@ -50,9 +50,10 @@ public class Input {
 		else cty = 0;
 		
 	    ax += (atx-ax)/10;
-	    ay += (atx-ay)/10;
+	    ay += (aty-ay)/10;
 	    cx += (ctx-cx)/10;
 	    cy += (cty-cy)/10;
+	    
 	}
 	
 	public void writeConfigToFile(String filename) {

@@ -13,7 +13,7 @@ public class Camera {
 	private float lx,ly,lz;
 	public float[] cp = {-10,42,-10,0,32,0,0,1,0};
 	private float xsteps, ysteps, zsteps = 0;
-	private float yaw,zoom;
+	public float yaw,zoom;
 	
 	public Camera(Input input, Player player) {
 		this.input = input;
@@ -23,9 +23,18 @@ public class Camera {
 		x = tx = (float) (player.x+(zoom*MathEXT.cosd(yaw)));
 		y = ty = (float) (player.y-(zoom*MathEXT.sind(yaw)));
 		z = tz = player.z+zoom/2;
+		lx = player.x;
+		ly = player.y;
+		lz = player.z;
 	}
 	
 	public void updateView() {
+	    
+		player.kfc = (float) MathEXT.point_direction(x, y, player.x, player.y);
+		
+		yaw+=input.cx*2;
+		
+		zoom = Math.min(Math.max(zoom+input.cy/4,3),20);
 		
 		tx = (float) (player.x+(zoom*MathEXT.cosd(yaw)));
 		ty = (float) (player.y-(zoom*MathEXT.sind(yaw)));
@@ -35,10 +44,13 @@ public class Camera {
 	    y += (ty-y)/10;
 	    z += (tz-z)/10;
 	    
-		yaw+=input.ax*2;
-		zoom = Math.min(Math.max(zoom+input.cy/4,3),20);
+
 		
-		player.kfc = (float) MathEXT.point_direction(x, y, player.x, player.y);
+	    lx += (player.x-lx)/6;
+	    ly += (player.y-ly)/6;
+	    lz += (player.z-lz)/6;
+	    
+		zoom = Math.min(Math.max(zoom+input.cy/4,3),20);
 		
 		/*if (input.isKeyPressed("CamUp")) {
 			cp[0] += 0.3;
@@ -71,7 +83,7 @@ public class Camera {
 	    //glLoadIdentity();
 	    
 	    GLU.gluLookAt(x, z, y,
-	              player.x,player.z,player.y,
+	              lx,lz,ly,
 	              0,1,0);
 	    //GLU.gluLookAt(0, 0, 10, 2, 0, 5, 0, 0, 1);
 	    //GLU.gluLookAt( cp[0], cp[1], cp[2], cp[3], cp[4], cp[5], cp[6], cp[7], cp[8]);
