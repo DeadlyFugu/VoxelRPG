@@ -60,7 +60,7 @@ public class Input {
 	}
 
 	public void updateAxis() {
-		System.out.println(aty);
+		//System.out.println(aty);
 		if (emulatedAxis) {
 			if (isKeyPressed("Right")) atx = 1;
 			else if (isKeyPressed("Left")) atx = -1;

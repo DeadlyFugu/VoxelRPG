@@ -96,8 +96,6 @@ public class Player {
 			z+=1;
 		}
 		
-		System.out.println(x+" "+y+" "+Math.floor(x/32)+" "+Math.floor(y/32));
-		
 		if (Math.floor(px*100) != Math.floor(x*100) && Math.floor(py*100) != Math.floor(y*100)) dir = kfc-(float) MathEXT.point_direction(0,0,input.ax,input.ay)-90;
 		
 		GL11.glPushMatrix();

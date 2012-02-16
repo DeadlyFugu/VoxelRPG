@@ -17,14 +17,20 @@ public class Chunk {
 	int height = 64;
 	int width = 32;
 	FloatBuffer floatBuffer;
+	ArrayList<Float> vboDataAL = new ArrayList<Float>();
+	ArrayList<Byte> vboDataALE = new ArrayList<Byte>();
+	public boolean hasVBO = false;
+	private boolean finalVBO = false;
+	private World world;
+	Chunk[] friendChunks = {null,null,null,null};
 
-	public Chunk(int x, int y) {
+	public Chunk(int x, int y, World world) {
 		chunkData = new byte[width][width][height];
 		this.x = x;
 		this.y = y;
 		//loadDataFromFile(new File("world/"+Integer.toString(x)+"_"+Integer.toString(y)))
 		flattenSurface(new Random());
-		generateVBO();
+		this.world = world;
 	}
 
 	private void vertexToAL(float x, float y, float z, byte r, byte g, byte b, byte a, ArrayList<Float> al, ArrayList<Byte> ale) {
@@ -38,8 +44,6 @@ public class Chunk {
 	}
 
 	private void generateVBO() {
-		ArrayList<Float> vboDataAL = new ArrayList<Float>();
-		ArrayList<Byte> vboDataALE = new ArrayList<Byte>();
 		byte[] bcolra = {0,60};
 		byte[] bcolga = {0,120};
 		byte[] bcolba = {0,20};
@@ -47,61 +51,91 @@ public class Chunk {
 		byte[] bcolgb = {0,125};
 		byte[] bcolbb = {0,40};
 		double shadeLevel = 0.15;
+
+		friendChunks[0] = world.getChunkAt(x+1, y);
+		friendChunks[0] = world.getChunkAt(x-1, y);
+		friendChunks[0] = world.getChunkAt(x, y+1);
+		friendChunks[0] = world.getChunkAt(x, y-1);
+
 		for (int  i=0; i<width; i++) {
 			for (int  j=0; j<width; j++) {
 				for (int  k=0; k<height; k++) {
 					if (chunkData[i][j][k] != 0) {
-						boolean[] dircol = {(chunkData[Math.min(i+1,width-1)][j][k] == 0),
-								(chunkData[Math.max(i-1,0)][j][k] == 0),
-								(chunkData[i][Math.min(j+1,width-1)][k] == 0),
-								(chunkData[i][Math.max(j-1,0)][k] == 0),
-								(chunkData[i][j][Math.min(k+1,height-1)] == 0),
-								(chunkData[i][j][Math.max(k-1,0)] == 0)
+						boolean requiresFullChk = !(i!= 0 && i!= 31 && j!= 0 && j!= 31);
+						boolean[] dircol = {(blockAt(Math.min(i+1,width-1),j,k,requiresFullChk) == 0),
+								(blockAt(Math.max(i-1,0),j,k,requiresFullChk) == 0),
+								(blockAt(i,Math.min(j+1,width-1),k,requiresFullChk) == 0),
+								(blockAt(i,Math.max(j-1,0),k,requiresFullChk) == 0),
+								(blockAt(i,j,Math.min(k+1,height-1),requiresFullChk) == 0),
+								(blockAt(i,j,Math.max(k-1,0),requiresFullChk) == 0)
 						};
 						//if (dircol[2]) System.out.println("Yes"); else System.out.println("Nope");
-						//System.out.println((int) chunkData[i][j][k])
-						//Bottomright,bottomleft, topleft, topright
+						//System.out.println((int) blockAt(i,j,k])
+						//topleft, topright, Bottomright,bottomleft
 						double[] vcol = {0.8,0.8,0.8,0.8,0.7,0.7,0.7,0.7,0.8,0.8,0.8,0.8,0.6,0.6,0.6,0.6,0.8,0.8,0.8,0.8,1,1,1,1};
-						if (i!= 0 && i!= 31 && j!= 0 && j!= 31 && k!= 0 && k!= 63) {
-							//+Z axis
-							if (chunkData[i][j][k+1] == 0) {
-								if (chunkData[i-1][j][k+1] != 0) {vcol[22] -= shadeLevel; vcol[21] -= shadeLevel;}
-								if (chunkData[i+1][j][k+1] != 0) {vcol[20] -= shadeLevel; vcol[23] -= shadeLevel;}
-								if (chunkData[i][j-1][k+1] != 0) {vcol[23] -= shadeLevel; vcol[22] -= shadeLevel;}
-								if (chunkData[i][j+1][k+1] != 0) {vcol[20] -= shadeLevel; vcol[21] -= shadeLevel;}
-								
-								if (chunkData[i-1][j-1][k+1] != 0) vcol[22] -= shadeLevel;
-								if (chunkData[i+1][j-1][k+1] != 0) vcol[23] -= shadeLevel;
-								if (chunkData[i-1][j+1][k+1] != 0) vcol[21] -= shadeLevel;
-								if (chunkData[i+1][j+1][k+1] != 0) vcol[20] -= shadeLevel;								
-							}
-							//-X axis
-							if (chunkData[i-1][j][k] == 0) {
-								if (chunkData[i-1][j-1][k] != 0) {vcol[5] -= shadeLevel; vcol[6] -= shadeLevel;}
-								if (chunkData[i-1][j+1][k] != 0) {vcol[4] -= shadeLevel; vcol[7] -= shadeLevel;}
-								if (chunkData[i-1][j][k-1] != 0) {vcol[4] -= shadeLevel; vcol[5] -= shadeLevel;}
-								if (chunkData[i-1][j][k+1] != 0) {vcol[7] -= shadeLevel; vcol[6] -= shadeLevel;}
-								
-								if (chunkData[i-1][j-1][k-1] != 0) vcol[5] -= shadeLevel;
-								if (chunkData[i-1][j+1][k-1] != 0) vcol[4] -= shadeLevel;
-								if (chunkData[i-1][j-1][k+1] != 0) vcol[6] -= shadeLevel;
-								if (chunkData[i-1][j+1][k+1] != 0) vcol[7] -= shadeLevel;								
-							}//*/
-							//-Y axis
-							if (chunkData[i][j-1][k] == 0) {
-								if (chunkData[i-1][j-1][k] != 0) {vcol[17] -= shadeLevel; vcol[18] -= shadeLevel;}
-								if (chunkData[i+1][j-1][k] != 0) {vcol[16] -= shadeLevel; vcol[19] -= shadeLevel;}
-								if (chunkData[i][j-1][k-1] != 0) {vcol[19] -= shadeLevel; vcol[18] -= shadeLevel;}
-								if (chunkData[i][j-1][k+1] != 0) {vcol[16] -= shadeLevel; vcol[17] -= shadeLevel;}
-								
-								if (chunkData[i-1][j-1][k-1] != 0) vcol[18] -= shadeLevel;
-								if (chunkData[i+1][j-1][k-1] != 0) vcol[19] -= shadeLevel;
-								if (chunkData[i-1][j-1][k+1] != 0) vcol[17] -= shadeLevel;
-								if (chunkData[i+1][j-1][k+1] != 0) vcol[16] -= shadeLevel;								
-							}//*/
+						//if (i!= 0 && i!= 31 && j!= 0 && j!= 31 && k!= 0 && k!= 63) {
+						//+Z axis
+						if (blockAt(i,j,k+1,requiresFullChk) == 0) {
+							if (blockAt(i-1,j,k+1,requiresFullChk) != 0) {vcol[22] -= shadeLevel; vcol[21] -= shadeLevel;}
+							if (blockAt(i+1,j,k+1,requiresFullChk) != 0) {vcol[20] -= shadeLevel; vcol[23] -= shadeLevel;}
+							if (blockAt(i,j-1,k+1,requiresFullChk) != 0) {vcol[23] -= shadeLevel; vcol[22] -= shadeLevel;}
+							if (blockAt(i,j+1,k+1,requiresFullChk) != 0) {vcol[20] -= shadeLevel; vcol[21] -= shadeLevel;}
+
+							if (blockAt(i-1,j-1,k+1,requiresFullChk) != 0) vcol[22] -= shadeLevel;
+							if (blockAt(i+1,j-1,k+1,requiresFullChk) != 0) vcol[23] -= shadeLevel;
+							if (blockAt(i-1,j+1,k+1,requiresFullChk) != 0) vcol[21] -= shadeLevel;
+							if (blockAt(i+1,j+1,k+1,requiresFullChk) != 0) vcol[20] -= shadeLevel;								
 						}
-						
-						byte bid = chunkData[i][j][k];
+						//-X axis
+						if (blockAt(i-1,j,k,requiresFullChk) == 0) {
+							if (blockAt(i-1,j-1,k,requiresFullChk) != 0) {vcol[5] -= shadeLevel; vcol[6] -= shadeLevel;}
+							if (blockAt(i-1,j+1,k,requiresFullChk) != 0) {vcol[4] -= shadeLevel; vcol[7] -= shadeLevel;}
+							if (blockAt(i-1,j,k-1,requiresFullChk) != 0) {vcol[4] -= shadeLevel; vcol[5] -= shadeLevel;}
+							if (blockAt(i-1,j,k+1,requiresFullChk) != 0) {vcol[7] -= shadeLevel; vcol[6] -= shadeLevel;}
+
+							if (blockAt(i-1,j-1,k-1,requiresFullChk) != 0) vcol[5] -= shadeLevel;
+							if (blockAt(i-1,j+1,k-1,requiresFullChk) != 0) vcol[4] -= shadeLevel;
+							if (blockAt(i-1,j-1,k+1,requiresFullChk) != 0) vcol[6] -= shadeLevel;
+							if (blockAt(i-1,j+1,k+1,requiresFullChk) != 0) vcol[7] -= shadeLevel;								
+						}//*/
+						//+X axis
+						if (blockAt(i+1,j,k,requiresFullChk) == 0) {
+							if (blockAt(i+1,j-1,k,requiresFullChk) != 0) {vcol[2] -= shadeLevel; vcol[1] -= shadeLevel;}
+							if (blockAt(i+1,j+1,k,requiresFullChk) != 0) {vcol[3] -= shadeLevel; vcol[0] -= shadeLevel;}
+							if (blockAt(i+1,j,k-1,requiresFullChk) != 0) {vcol[3] -= shadeLevel; vcol[2] -= shadeLevel;}
+							if (blockAt(i+1,j,k+1,requiresFullChk) != 0) {vcol[0] -= shadeLevel; vcol[1] -= shadeLevel;}
+
+							if (blockAt(i+1,j-1,k-1,requiresFullChk) != 0) vcol[2] -= shadeLevel;
+							if (blockAt(i+1,j+1,k-1,requiresFullChk) != 0) vcol[3] -= shadeLevel;
+							if (blockAt(i+1,j-1,k+1,requiresFullChk) != 0) vcol[1] -= shadeLevel;
+							if (blockAt(i+1,j+1,k+1,requiresFullChk) != 0) vcol[0] -= shadeLevel;								
+						}//*/
+						//-Y axis
+						if (blockAt(i,j-1,k,requiresFullChk) == 0) {
+							if (blockAt(i-1,j-1,k,requiresFullChk) != 0) {vcol[17] -= shadeLevel; vcol[18] -= shadeLevel;}
+							if (blockAt(i+1,j-1,k,requiresFullChk) != 0) {vcol[16] -= shadeLevel; vcol[19] -= shadeLevel;}
+							if (blockAt(i,j-1,k-1,requiresFullChk) != 0) {vcol[19] -= shadeLevel; vcol[18] -= shadeLevel;}
+							if (blockAt(i,j-1,k+1,requiresFullChk) != 0) {vcol[16] -= shadeLevel; vcol[17] -= shadeLevel;}
+
+							if (blockAt(i-1,j-1,k-1,requiresFullChk) != 0) vcol[18] -= shadeLevel;
+							if (blockAt(i+1,j-1,k-1,requiresFullChk) != 0) vcol[19] -= shadeLevel;
+							if (blockAt(i-1,j-1,k+1,requiresFullChk) != 0) vcol[17] -= shadeLevel;
+							if (blockAt(i+1,j-1,k+1,requiresFullChk) != 0) vcol[16] -= shadeLevel;								
+						}//*/
+						//+Y axis 8-11
+						if (blockAt(i,j+1,k,requiresFullChk) == 0) {
+							if (blockAt(i-1,j+1,k,requiresFullChk) != 0) {vcol[10] -= shadeLevel; vcol[9] -= shadeLevel;}
+							if (blockAt(i+1,j+1,k,requiresFullChk) != 0) {vcol[11] -= shadeLevel; vcol[8] -= shadeLevel;}
+							if (blockAt(i,j+1,k-1,requiresFullChk) != 0) {vcol[8] -= shadeLevel; vcol[9] -= shadeLevel;}
+							if (blockAt(i,j+1,k+1,requiresFullChk) != 0) {vcol[11] -= shadeLevel; vcol[10] -= shadeLevel;}
+
+							if (blockAt(i-1,j+1,k-1,requiresFullChk) != 0) vcol[9] -= shadeLevel;
+							if (blockAt(i+1,j+1,k-1,requiresFullChk) != 0) vcol[8] -= shadeLevel;
+							if (blockAt(i-1,j+1,k+1,requiresFullChk) != 0) vcol[10] -= shadeLevel;
+							if (blockAt(i+1,j+1,k+1,requiresFullChk) != 0) vcol[11] -= shadeLevel;								
+						}//*/
+
+						byte bid = blockAt(i,j,k,requiresFullChk);
 						double weight = PerlinNoise.pNoise((x*32+i)*0.15, (y*32+j)*0.15, 0.2, 2);
 						byte colr = (byte) (bcolra[bid] + (bcolra[bid] - bcolrb[bid])*weight);
 						byte colg = (byte) (bcolga[bid] + (bcolga[bid] - bcolgb[bid])*weight);
@@ -148,32 +182,23 @@ public class Chunk {
 			}
 		}
 
-		//Create a VBO and shove stuff into it
+		hasVBO = true;
 
-		vboid = VBOHandler.createVBOID();
-		vboidc = VBOHandler.createVBOID();
+	}
 
-		floatBuffer = BufferUtils.createFloatBuffer(vboDataAL.size());
-		float[] alAsFloat = new float[vboDataAL.size()];
-		int index = 0;
-		for (float b : vboDataAL) {
-			alAsFloat[index++] = b;
+	public byte blockAt(int i, int j, int k, boolean fullChk) {
+		if (fullChk) {
+			return world.blockAt(x*32+i, y*32+j, k);
+			///return 0;
+		} else {
+			return chunkData[i][j][k];
 		}
-		floatBuffer.put(alAsFloat);
-		floatBuffer.rewind();
-		System.out.println(floatBuffer.toString());
-		VBOHandler.bufferData(vboid, floatBuffer);
+	}
 
-		ByteBuffer byteBuffer = BufferUtils.createByteBuffer(vboDataALE.size());
-		byte[] aleAsByte = new byte[vboDataALE.size()];
-		index = 0;
-		for (byte b : vboDataALE) {
-			aleAsByte[index++] = b;
+	public void loadVBO() {
+		if (!hasVBO) {
+			generateVBO();
 		}
-		byteBuffer.put(aleAsByte);
-		byteBuffer.rewind();
-		VBOHandler.bufferData(vboidc, byteBuffer);//*/
-
 	}
 
 	private void loadDataFromFile(File file) {
@@ -214,11 +239,43 @@ public class Chunk {
 			}
 		}
 	}
+	
+	private void makeVBO() {
+		//Create a VBO and shove stuff into it
+
+		vboid = VBOHandler.createVBOID();
+		vboidc = VBOHandler.createVBOID();
+
+		floatBuffer = BufferUtils.createFloatBuffer(vboDataAL.size());
+		float[] alAsFloat = new float[vboDataAL.size()];
+		int index = 0;
+		for (float b : vboDataAL) {
+			alAsFloat[index++] = b;
+		}
+		floatBuffer.put(alAsFloat);
+		floatBuffer.rewind();
+		System.out.println(floatBuffer.toString());
+		VBOHandler.bufferData(vboid, floatBuffer);
+
+		ByteBuffer byteBuffer = BufferUtils.createByteBuffer(vboDataALE.size());
+		byte[] aleAsByte = new byte[vboDataALE.size()];
+		index = 0;
+		for (byte b : vboDataALE) {
+			aleAsByte[index++] = b;
+		}
+		byteBuffer.put(aleAsByte);
+		byteBuffer.rewind();
+		VBOHandler.bufferData(vboidc, byteBuffer);//*/
+	}
 
 	public void render() {
+		
+		if (!finalVBO && hasVBO) {
+			makeVBO();
+		}
 
 		GL11.glPushMatrix();
-		
+
 		GL11.glRotated(90, 1, 0, 0);
 		GL11.glScaled(1, 1, -1);
 		GL11.glTranslated(x*32,y*32,0);

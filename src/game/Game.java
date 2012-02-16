@@ -60,7 +60,7 @@ public class Game {
 	private int shader;
 	private int vertShader;
 	private int fragShader;
-	private boolean useShader = true;
+	private boolean useShader = false;
 
 	public static void main(String args[]) {
 		boolean fullscreen = false;
@@ -84,6 +84,7 @@ public class Game {
 				Display.update();
 			}
 			cleanup();
+			System.exit(0);
 		}
 		catch (Exception e) {
 			e.printStackTrace();
@@ -144,6 +145,7 @@ public class Game {
 		Display.setVSyncEnabled(true);
 	}
 	private void init() throws Exception {
+		
 		createWindow();
 
 		initGL();
@@ -154,6 +156,8 @@ public class Game {
 		world = new World(input,player,camera);
 		player.setWorld(world);
 		player.setCam(camera);
+		
+		new VBOThread(world).start();
 	}
 	private void initGL() {
 		GL11.glEnable(GL11.GL_TEXTURE_2D); // Enable Texture Mapping
@@ -203,11 +207,19 @@ public class Game {
 		if(vertShader !=0 && fragShader !=0){
 			ARBShaderObjects.glAttachObjectARB(shader, vertShader);
 			ARBShaderObjects.glAttachObjectARB(shader, fragShader);
+
 			ARBShaderObjects.glLinkProgramARB(shader);
+			if (ARBShaderObjects.glGetObjectParameteriARB(shader, ARBShaderObjects.GL_OBJECT_LINK_STATUS_ARB) == GL11.GL_FALSE) {
+				printLogInfo(shader);
+				useShader=false;
+			}
 			ARBShaderObjects.glValidateProgramARB(shader);
-			useShader=printLogInfo(shader);
+			if (ARBShaderObjects.glGetObjectParameteriARB(shader, ARBShaderObjects.GL_OBJECT_VALIDATE_STATUS_ARB) == GL11.GL_FALSE) {
+				printLogInfo(shader);
+				useShader=false;
+			}
 		}else useShader=false;
-		
+
 		if(useShader) {
 			ARBShaderObjects.glUseProgramObjectARB(shader);
 			System.out.println("hhh");

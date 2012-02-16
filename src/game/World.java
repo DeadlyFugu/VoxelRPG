@@ -14,6 +14,7 @@ public class World {
 	private ArrayList<Entity> entities = new ArrayList<Entity>();
 	private ArrayList<Chunk> allChunks = new ArrayList<Chunk>();
 	private ArrayList<Chunk> activeChunks = new ArrayList<Chunk>();
+	public ArrayList<Chunk> chunkQueue = new ArrayList<Chunk>();
 	
 	public Input input;
 	public Player player;
@@ -64,28 +65,48 @@ public class World {
 				}
 			} else {
 				System.out.println("New chunk added");
-				allChunks.add(new Chunk((int) (pcx+(Math.floor(i/5))-2),pcy+(i%5)-2));
+				allChunks.add(new Chunk((int) (pcx+(Math.floor(i/5))-2),pcy+(i%5)-2, this));
 				activeChunks.add(allChunks.get(allChunks.size()-1));
 			}
 		}
 		
 		for (Chunk c : activeChunks) {
-			c.render();
+			if (!c.hasVBO) {
+				if (!chunkQueue.contains(c)) {
+					chunkQueue.add(c);
+				}
+			} else {
+				c.render();
+			}
 		}
 	}
 	
 	public boolean placeFree(float i, float j, float k) {
 		return placeFree((int) i, (int) j, (int) k);
 	}
-
+	
 	public boolean placeFree(int i, int j, int k) {
+		return blockAt(i,j,k) == 0;
+	}
+	
+	public byte blockAt(int i, int j, int k) {
 		int cxp = (int) Math.floor(i/32);
 		int cyp = (int) Math.floor(j/32);
 		for (Chunk c : activeChunks) {
 			if (c.x == cxp && c.y == cyp) {
-				return c.chunkData[i%32][j%32][k%64] == 0;
+				return c.chunkData[Math.abs(i%32)][Math.abs(j%32)][k%64];
 			}
 		}
-		return false;
+		Chunk nc = new Chunk(cxp,cyp, this);
+		return nc.chunkData[Math.abs(i%32)][Math.abs(j%32)][k%64];
+	}
+	
+	public Chunk getChunkAt(int i, int j) {
+		for (Chunk c : activeChunks) {
+			if (c.x == i && c.y == j) {
+				return c;
+			}
+		}
+		return new Chunk(i,j, this);
 	}
 }
