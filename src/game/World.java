@@ -70,11 +70,11 @@ public class World {
 			}
 		}
 		
+		chunkQueue.clear();
+		
 		for (Chunk c : activeChunks) {
 			if (!c.hasVBO) {
-				if (!chunkQueue.contains(c)) {
-					chunkQueue.add(c);
-				}
+				chunkQueue.add(c);
 			} else {
 				c.render();
 			}

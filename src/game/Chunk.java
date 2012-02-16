@@ -53,20 +53,20 @@ public class Chunk {
 		double shadeLevel = 0.15;
 
 		friendChunks[0] = world.getChunkAt(x+1, y);
-		friendChunks[0] = world.getChunkAt(x-1, y);
-		friendChunks[0] = world.getChunkAt(x, y+1);
-		friendChunks[0] = world.getChunkAt(x, y-1);
+		friendChunks[1] = world.getChunkAt(x-1, y);
+		friendChunks[2] = world.getChunkAt(x, y+1);
+		friendChunks[3] = world.getChunkAt(x, y-1);
 
 		for (int  i=0; i<width; i++) {
 			for (int  j=0; j<width; j++) {
 				for (int  k=0; k<height; k++) {
 					if (chunkData[i][j][k] != 0) {
 						boolean requiresFullChk = !(i!= 0 && i!= 31 && j!= 0 && j!= 31);
-						boolean[] dircol = {(blockAt(Math.min(i+1,width-1),j,k,requiresFullChk) == 0),
-								(blockAt(Math.max(i-1,0),j,k,requiresFullChk) == 0),
-								(blockAt(i,Math.min(j+1,width-1),k,requiresFullChk) == 0),
-								(blockAt(i,Math.max(j-1,0),k,requiresFullChk) == 0),
-								(blockAt(i,j,Math.min(k+1,height-1),requiresFullChk) == 0),
+						boolean[] dircol = {(blockAt(i+1,j,k,requiresFullChk) == 0),
+								(blockAt(i-1,j,k,requiresFullChk) == 0),
+								(blockAt(i,j+1,k,requiresFullChk) == 0),
+								(blockAt(i,j-1,k,requiresFullChk) == 0),
+								(blockAt(i,j,Math.min(k+1,63),requiresFullChk) == 0),
 								(blockAt(i,j,Math.max(k-1,0),requiresFullChk) == 0)
 						};
 						//if (dircol[2]) System.out.println("Yes"); else System.out.println("Nope");
@@ -186,13 +186,27 @@ public class Chunk {
 
 	}
 
-	public byte blockAt(int i, int j, int k, boolean fullChk) {
+	public byte blockAt(int i, int j, int l, boolean fullChk) {
+		int k = Math.max(Math.min(l,63),0);
 		if (fullChk) {
-			return world.blockAt(x*32+i, y*32+j, k);
-			///return 0;
-		} else {
-			return chunkData[i][j][k];
+			//return world.blockAt(x*32+i, y*32+j, k);
+			if (i == -1) {
+				if (j == -1 || j == 32) return 0;
+				return friendChunks[1].chunkData[31][j][k];
+			}
+			if (i == 32) {
+				if (j == -1 || j == 32) return 0;
+				return friendChunks[0].chunkData[0][j][k];
+			}
+			if (j == -1) {
+				return friendChunks[3].chunkData[i][31][k];
+			}
+			if (j == 32) {
+				return friendChunks[2].chunkData[i][0][k];
+			}
+			//return 0;
 		}
+		return chunkData[i][j][k];
 	}
 
 	public void loadVBO() {
@@ -272,6 +286,7 @@ public class Chunk {
 		
 		if (!finalVBO && hasVBO) {
 			makeVBO();
+			finalVBO = true;
 		}
 
 		GL11.glPushMatrix();

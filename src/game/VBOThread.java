@@ -10,14 +10,16 @@ public class VBOThread extends Thread {
 	
 	public void run() {
 		while(true) {
-			try {
-				sleep(1000);
-			for (Chunk c : world.chunkQueue) {
+			ArrayList<Chunk> chunkQueue = new ArrayList<Chunk>(world.chunkQueue);
+				//sleep(10);
+			for (Chunk c : chunkQueue) {
+				try {
 				c.loadVBO();
-			}
-			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+				world.chunkQueue.remove(c);
+				System.out.println("Chunk in Queue complete");
 			}
 		}
 	}
