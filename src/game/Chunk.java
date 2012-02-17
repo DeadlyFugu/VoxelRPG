@@ -29,7 +29,12 @@ public class Chunk {
 		this.x = x;
 		this.y = y;
 		//loadDataFromFile(new File("world/"+Integer.toString(x)+"_"+Integer.toString(y)))
-		flattenSurface(new Random());
+		File f = new File("world/"+x+"_"+y);
+		if (f.isFile()) {
+			loadDataFromFile(f);
+		} else {
+			flattenSurface(new Random());
+		}
 		this.world = world;
 	}
 
@@ -215,12 +220,9 @@ public class Chunk {
 		}
 	}
 
-	private void loadDataFromFile(File file) {
+	public void loadDataFromFile(File file) {
 		try {
 			FileInputStream is = new FileInputStream(file);
-
-			// Get the size of the file
-			long length = file.length();
 
 			for (int  i=0; i<width; i++) {
 				for (int  j=0; j<width; j++) {
@@ -232,6 +234,25 @@ public class Chunk {
 
 			// Close the input stream and return bytes
 			is.close();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public void saveDataToFile(File file) {
+		try {
+			FileOutputStream os = new FileOutputStream(file);
+
+			for (int  i=0; i<width; i++) {
+				for (int  j=0; j<width; j++) {
+					for (int  k=0; k<height; k++) {
+						 os.write(chunkData[i][j][k]);
+					}
+				}
+			}
+
+			// Close the input stream and return bytes
+			os.close();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -310,5 +331,12 @@ public class Chunk {
 		GL11.glDisableClientState(GL11.GL_VERTEX_ARRAY);
 
 		GL11.glPopMatrix();
+	}
+
+	public void clearVBO() {
+		// TODO Auto-generated method stub
+		//ARBVertexBufferObject.glDeleteBuffersARB(vboid);
+		//ARBVertexBufferObject.glDeleteBuffersARB(vboidc);
+		hasVBO = false;
 	}
 }

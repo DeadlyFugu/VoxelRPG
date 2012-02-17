@@ -14,3 +14,5 @@ CamUp,23
 CamDown,37
 CamLeft,36
 CamRight,38
+PlaceBlock,32
+DeleteBlock,33

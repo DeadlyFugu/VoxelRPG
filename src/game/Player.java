@@ -33,6 +33,15 @@ public class Player {
 		} else {
 			mvspd = 0.15f;
 		}
+		
+		if (input.isKeyPressed("PlaceBlock")) {
+			world.setBlockAt((int) x,(int) y,(int) z-1,(byte) 1);
+		}
+		
+		if (input.isKeyPressed("DeleteBlock")) {
+			world.setBlockAt((int) x,(int) y,(int) z-1,(byte) 0);
+		}
+		
 		if (world.placeFree(x,y,z-0.1f)) {
 			zspd -= 0.01;
 		}//*/
@@ -83,7 +92,7 @@ public class Player {
 		} else if (world.placeFree((float) (x+(input.ay*mvspd*MathEXT.cosd(kfc))),(float) (y-(input.ay*mvspd*MathEXT.sind(kfc))), z+1)) {
 			x=(float) (x+(input.ay*mvspd*MathEXT.cosd(kfc)));
 			y=(float) (y-(input.ay*mvspd*MathEXT.sind(kfc)));
-			z+=1;
+			z+=0.1;
 		}
 		if (world.placeFree((float) (x+(input.ax*mvspd*MathEXT.cosd(kfc-90))),(float) (y-(input.ax*mvspd*MathEXT.sind(kfc-90))), z)) {
 			x=(float) (x+(input.ax*mvspd*MathEXT.cosd(kfc-90)));
@@ -93,7 +102,7 @@ public class Player {
 			x=(float) (x+(input.ax*mvspd*MathEXT.cosd(kfc-90)));
 			y=(float) (y-(input.ax*mvspd*MathEXT.sind(kfc-90)));
 			cam.yaw-=input.ax*0.8;
-			z+=1;
+			z+=0.1;
 		}
 		
 		if (Math.floor(px*100) != Math.floor(x*100) && Math.floor(py*100) != Math.floor(y*100)) dir = kfc-(float) MathEXT.point_direction(0,0,input.ax,input.ay)-90;

@@ -8,6 +8,7 @@ import static org.lwjgl.opengl.GL11.glColor3f;
 import static org.lwjgl.opengl.GL11.glEnd;
 import static org.lwjgl.opengl.GL11.glVertex2f;
 
+import java.io.File;
 import java.util.ArrayList;
 
 public class World {
@@ -40,18 +41,6 @@ public class World {
 		
 		Chunk[] suitableChunksFound = {null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null};
 		for (Chunk c : allChunks) {
-			/*if (c.x == pcx-1 && c.y == pcy-1) suitableChunksFound[0] = c;
-			else if (c.x == pcx-1 && c.y == pcy) suitableChunksFound[1] = c;
-			else if (c.x == pcx-1 && c.y == pcy+1) suitableChunksFound[2] = c;
-
-			else if (c.x == pcx && c.y == pcy-1) suitableChunksFound[3] = c;
-			else if (c.x == pcx && c.y == pcy) suitableChunksFound[4] = c;
-			else if (c.x == pcx && c.y == pcy+1) suitableChunksFound[5] = c;
-			
-			else if (c.x == pcx+1 && c.y == pcy-1) suitableChunksFound[6] = c;
-			else if (c.x == pcx+1 && c.y == pcy) suitableChunksFound[7] = c;
-			else if (c.x == pcx+1 && c.y == pcy+1) suitableChunksFound[8] = c;//*/
-			//System.out.println(c.x+" "+c.y+" "+((pcx-c.x+1)*3+(pcy-c.y+1)));
 			if (c.x > pcx-3 && c.y > pcy-3 && c.x < pcx+3 && c.y < pcy+3) suitableChunksFound[((c.x-pcx+2)*5+(c.y-pcy+2))] = c;
 			else if (activeChunks.contains(c)) {
 				activeChunks.remove(c);
@@ -99,6 +88,27 @@ public class World {
 		}
 		Chunk nc = new Chunk(cxp,cyp, this);
 		return nc.chunkData[Math.abs(i%32)][Math.abs(j%32)][k%64];
+	}
+	
+	public void setBlockAt(int i, int j, int k, byte id) {
+		int cxp = (int) Math.floor(i/32);
+		int cyp = (int) Math.floor(j/32);
+		
+		Chunk ctr = null;
+		
+		for (Chunk c : activeChunks) {
+			if (c.x == cxp && c.y == cyp) {
+				c.chunkData[Math.abs(i%32)][Math.abs(j%32)][k%64] = id;
+				c.saveDataToFile(new File("world/"+c.x+"_"+c.y));
+				c.clearVBO();
+				ctr = c;
+				allChunks.remove(c);
+			}
+		}
+		
+		if (ctr != null) {
+			activeChunks.remove(ctr);
+		}
 	}
 	
 	public Chunk getChunkAt(int i, int j) {
