@@ -38,8 +38,14 @@ public class Player {
 			world.setBlockAt((int) x,(int) y,(int) z-1,(byte) 1);
 		}
 		
-		if (input.isKeyPressed("DeleteBlock")) {
-			world.setBlockAt((int) x,(int) y,(int) z-1,(byte) 0);
+		if (input.isKeyPressed("FrontPlaceBlock")) {
+			world.setBlockAt((int) (x+(1*MathEXT.cosd(kfc))),(int) (y-(1*MathEXT.sind(kfc))),(int) z,(byte) 1);
+		}
+		
+		if (input.isKeyPressed("ForceChunkReload")) {
+			Chunk c = world.getChunkAt((int) x/32,(int) y/32);
+			world.activeChunks.remove(c);
+			world.allChunks.remove(c);
 		}
 		
 		if (world.placeFree(x,y,z-0.1f)) {

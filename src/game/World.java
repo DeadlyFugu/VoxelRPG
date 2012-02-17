@@ -13,18 +13,20 @@ import java.util.ArrayList;
 
 public class World {
 	private ArrayList<Entity> entities = new ArrayList<Entity>();
-	private ArrayList<Chunk> allChunks = new ArrayList<Chunk>();
-	private ArrayList<Chunk> activeChunks = new ArrayList<Chunk>();
+	public ArrayList<Chunk> allChunks = new ArrayList<Chunk>();
+	public ArrayList<Chunk> activeChunks = new ArrayList<Chunk>();
 	public ArrayList<Chunk> chunkQueue = new ArrayList<Chunk>();
 	
 	public Input input;
 	public Player player;
 	private Camera camera;
+	public ChunkGenerator chunkGenerator;
 	
 	public World(Input input, Player player, Camera camera) {
 		this.input = input;
 		this.player = player;
 		this.camera = camera;
+		this.chunkGenerator = new ChunkGenerator();
 	}
 	
 	public void update() {
@@ -99,10 +101,12 @@ public class World {
 		for (Chunk c : activeChunks) {
 			if (c.x == cxp && c.y == cyp) {
 				c.chunkData[Math.abs(i%32)][Math.abs(j%32)][k%64] = id;
+				//c.hasVBO = false;
+				//c.loadVBO();
 				c.saveDataToFile(new File("world/"+c.x+"_"+c.y));
-				c.clearVBO();
-				ctr = c;
-				allChunks.remove(c);
+				//c.clearVBO();
+				//ctr = c;
+				//allChunks.remove(c);
 			}
 		}
 		

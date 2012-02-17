@@ -16,7 +16,7 @@ public class Chunk {
 	private int vboid, vboidc;
 	int height = 64;
 	int width = 32;
-	FloatBuffer floatBuffer;
+	private int vbosize;
 	ArrayList<Float> vboDataAL = new ArrayList<Float>();
 	ArrayList<Byte> vboDataALE = new ArrayList<Byte>();
 	public boolean hasVBO = false;
@@ -28,6 +28,7 @@ public class Chunk {
 		chunkData = new byte[width][width][height];
 		this.x = x;
 		this.y = y;
+		this.world = world;
 		//loadDataFromFile(new File("world/"+Integer.toString(x)+"_"+Integer.toString(y)))
 		File f = new File("world/"+x+"_"+y);
 		if (f.isFile()) {
@@ -35,7 +36,6 @@ public class Chunk {
 		} else {
 			flattenSurface(new Random());
 		}
-		this.world = world;
 	}
 
 	private void vertexToAL(float x, float y, float z, byte r, byte g, byte b, byte a, ArrayList<Float> al, ArrayList<Byte> ale) {
@@ -49,6 +49,10 @@ public class Chunk {
 	}
 
 	private void generateVBO() {
+		
+		vboDataAL.clear();
+		vboDataALE.clear();
+		
 		byte[] bcolra = {0,60};
 		byte[] bcolga = {0,120};
 		byte[] bcolba = {0,20};
@@ -61,7 +65,7 @@ public class Chunk {
 		friendChunks[1] = world.getChunkAt(x-1, y);
 		friendChunks[2] = world.getChunkAt(x, y+1);
 		friendChunks[3] = world.getChunkAt(x, y-1);
-
+		
 		for (int  i=0; i<width; i++) {
 			for (int  j=0; j<width; j++) {
 				for (int  k=0; k<height; k++) {
@@ -186,6 +190,9 @@ public class Chunk {
 				}
 			}
 		}
+		
+
+		System.out.println("VBO Cleared");
 
 		hasVBO = true;
 
@@ -215,9 +222,9 @@ public class Chunk {
 	}
 
 	public void loadVBO() {
-		if (!hasVBO) {
+		//if (!hasVBO) {
 			generateVBO();
-		}
+		//}
 	}
 
 	public void loadDataFromFile(File file) {
@@ -259,20 +266,7 @@ public class Chunk {
 	}
 
 	private void flattenSurface(Random random) {
-		byte[][] heightMap = new byte[32][32];
-		for (int i=0; i<32; i++) {
-			for (int j=0; j<32; j++) {
-				heightMap[i][j] = (byte) (32+PerlinNoise.pNoise((x*32+i)*0.05, (y*32+j)*0.05, 0.3, 2)*32);
-			}
-		}
-		for (int  i=0; i<width; i++) {
-			for (int  j=0; j<width; j++) {
-				for (int  k=0; k<height; k++) {
-					if (heightMap[i][j] > k) chunkData[i][j][k] = 1;
-					else chunkData[i][j][k] = 0;
-				}
-			}
-		}
+		world.chunkGenerator.generate(this);
 	}
 	
 	private void makeVBO() {
@@ -281,7 +275,7 @@ public class Chunk {
 		vboid = VBOHandler.createVBOID();
 		vboidc = VBOHandler.createVBOID();
 
-		floatBuffer = BufferUtils.createFloatBuffer(vboDataAL.size());
+		FloatBuffer floatBuffer = BufferUtils.createFloatBuffer(vbosize = vboDataAL.size());
 		float[] alAsFloat = new float[vboDataAL.size()];
 		int index = 0;
 		for (float b : vboDataAL) {
@@ -325,7 +319,7 @@ public class Chunk {
 		ARBVertexBufferObject.glBindBufferARB(ARBVertexBufferObject.GL_ARRAY_BUFFER_ARB, vboidc);
 		GL11.glColorPointer(4, GL11.GL_BYTE, 0, 0);
 
-		GL11.glDrawArrays(GL11.GL_QUADS, 0, floatBuffer.limit()/3);
+		GL11.glDrawArrays(GL11.GL_QUADS, 0, vbosize/3);
 
 		GL11.glDisableClientState(GL11.GL_VERTEX_ARRAY);//*/
 		GL11.glDisableClientState(GL11.GL_VERTEX_ARRAY);
