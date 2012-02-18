@@ -1,5 +1,13 @@
 package game;
 
+import java.awt.image.BufferedImage;
+import java.awt.image.ColorModel;
+import java.awt.image.WritableRaster;
+import java.io.File;
+import java.io.IOException;
+
+import javax.imageio.ImageIO;
+
 import org.lwjgl.opengl.GL11;
 
 public class Player {
@@ -12,8 +20,8 @@ public class Player {
 	private Camera cam;
 
 	public Player() {
-		x = 42;
-		y = 42;
+		x = 48;
+		y = 48;
 		z = 50;
 		kfc = 0;
 		px = x;
@@ -28,10 +36,17 @@ public class Player {
 	}
 
 	public void update(Input input) {
+		if (input.isKeyPressed("PrintDebug")) {
+			System.out.println(x+","+y+" Chunk:"+(int) x/32+","+(int) y/32);
+		}
 		if (input.isKeyPressed("Sprint")) {
 			mvspd = 0.3f;
 		} else {
 			mvspd = 0.15f;
+		}
+		
+		if (input.isKeyPressed("SaveMapImage")) {
+			saveMapImage();
 		}
 
 		if (z < 15.5) {
@@ -137,6 +152,61 @@ public class Player {
 		GL11.glVertex3d(-0.5, 0, 0);
 		GL11.glEnd();
 		GL11.glPopMatrix();
+	}
+	
+	private void saveMapImage() {
+		int size = 256;
+		int step = 50;
+		//TODO: REWRITE TO USE ChunkGeneratorTerrain.generate() INSTEAD. DO IT NOW. SERIOUSLY.
+		int[] depthMap = new int[size*size*3];
+		/*Chunk[][] chunkMap = new Chunk[403][403];
+		for (int i=0; i<size*step/32+1; i++) {
+			for (int j=0; j<size*step/32+1; j++) {
+				chunkMap[i][j] = new Chunk((smixo/32)+i,(smiyo/32)+j,world);
+			}
+		}
+		for (int i=0; i<size; i++) {
+			for (int j=0; j<size; j++) {
+				byte k;
+				for (k=0; chunkMap[i*step/32][j*step/32].chunkData[i*step%32][j*step%32][k] != 0; k++);
+				k=(byte) (k*4);
+				depthMap[(i*size+j)*3] = k;
+				depthMap[(i*size+j)*3+1] = k;
+				if (k > 16)
+					depthMap[(i*size+j)*3+2] = k;
+				else
+					depthMap[(i*size+j)*3+2] = 64;
+			}
+		}*/
+		ChunkGeneratorTerrain chunkGenerator = new ChunkGeneratorTerrain(world);
+		for (int i=0; i<size; i++) {
+			for (int j=0; j<size; j++) {
+				byte k;
+				for (k=64; chunkGenerator.generate(i*step,j*step,k) == 0; k--);
+				k=(byte) (k*2);
+				if (k > 16*2) {
+					depthMap[(i*size+j)*3] = k;
+					depthMap[(i*size+j)*3+1] = k;
+					depthMap[(i*size+j)*3+2] = k;
+				} else {
+					depthMap[(i*size+j)*3] = k;
+					depthMap[(i*size+j)*3+1] = k;
+					depthMap[(i*size+j)*3+2] = 128;
+				}
+			}
+		}
+
+        BufferedImage image = new BufferedImage(size, size, BufferedImage.TYPE_INT_RGB);
+        WritableRaster raster = (WritableRaster) image.getData();
+        raster.setPixels(0,0,size,size,depthMap);
+        BufferedImage newImage = new BufferedImage(image.getColorModel(),raster,false, null);
+        File imageFile = new File("BigMap.png");
+        try {
+			ImageIO.write(newImage, "png", imageFile);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}//*/
 	}
 
 	public World getWorld() {

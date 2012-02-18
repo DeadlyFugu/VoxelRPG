@@ -275,7 +275,7 @@ public class Chunk {
 	}
 
 	private void flattenSurface(Random random) {
-		world.chunkGenerator.generate(this);
+		world.chunkGeneratorTerrain.generate(this);
 	}
 	
 	private void makeVBO() {

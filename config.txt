@@ -17,3 +17,5 @@ CamRight,38
 PlaceBlock,32
 FrontPlaceBlock,33
 ForceChunkReload,19
+PrintDebug,20
+SaveMapImage,21

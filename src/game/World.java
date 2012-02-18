@@ -13,13 +13,13 @@ public class World {
 	public Input input;
 	public Player player;
 	private Camera camera;
-	public ChunkGenerator chunkGenerator;
+	public ChunkGeneratorTerrain chunkGeneratorTerrain;
 	
 	public World(Input input, Player player, Camera camera) {
 		this.input = input;
 		this.player = player;
 		this.camera = camera;
-		this.chunkGenerator = new ChunkGeneratorTerrain(this);
+		this.chunkGeneratorTerrain = new ChunkGeneratorTerrain(this);
 	}
 	
 	public void update() {
