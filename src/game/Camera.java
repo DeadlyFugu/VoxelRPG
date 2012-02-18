@@ -2,6 +2,10 @@ package game;
 
 import static org.lwjgl.opengl.GL11.*;
 
+import game.system.Input;
+import game.util.MathEXT;
+import game.world.World;
+
 import java.nio.FloatBuffer;
 
 import org.lwjgl.BufferUtils;
@@ -12,6 +16,7 @@ public class Camera {
 	
 	private Input input;
 	private Player player;
+	private World world;
 	public float x,y,z;
 	private float tx,ty,tz;
 	private float lx,ly,lz;
@@ -40,6 +45,10 @@ public class Camera {
 		fogColorNormal.put(new float [] {0.8f,0.9f,0.95f,1.0f}).rewind();
 	}
 	
+	public void setWorld(World world) {
+		this.world = world;
+	}
+	
 	public void updateView() {
 		
 		if (z < 15.5 && isUnderwater == false) {
@@ -62,9 +71,16 @@ public class Camera {
 		
 		zoom = Math.min(Math.max(zoom+input.cy/4,3),20);
 		
-		tx = (float) (player.x+(zoom*MathEXT.cosd(yaw)));
-		ty = (float) (player.y-(zoom*MathEXT.sind(yaw)));
-		tz = player.z+zoom/2;
+		float azoom = zoom;
+		
+		while(!world.placeFree((float) (player.x+(azoom*MathEXT.cosd(yaw))), (float) (player.y-(azoom*MathEXT.sind(yaw))), player.z+azoom/2) && azoom > 4f) {
+			azoom-=0.5f;
+		}
+		azoom-=2f;
+		
+		tx = (float) (player.x+(azoom*MathEXT.cosd(yaw)));
+		ty = (float) (player.y-(azoom*MathEXT.sind(yaw)));
+		tz = player.z+azoom/2;
 		
 	    x += (tx-x)/10;
 	    y += (ty-y)/10;
@@ -75,8 +91,6 @@ public class Camera {
 	    lx += (player.x-lx)/6;
 	    ly += (player.y-ly)/6;
 	    lz += (player.z-lz)/6;
-	    
-		zoom = Math.min(Math.max(zoom+input.cy/4,3),20);
 		
 		/*if (input.isKeyPressed("CamUp")) {
 			cp[0] += 0.3;

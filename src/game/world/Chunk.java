@@ -1,4 +1,7 @@
-package game;
+package game.world;
+
+import game.system.VBOHandler;
+import game.util.PerlinNoise;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -11,7 +14,7 @@ import org.lwjgl.opengl.GL11;
 import org.lwjgl.util.Color;
 
 public class Chunk {
-	byte[][][] chunkData;
+	public byte[][][] chunkData;
 	public int x,y;
 	private int vboid, vboidc;
 	int height = 64;

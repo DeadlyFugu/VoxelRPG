@@ -1,4 +1,4 @@
-package game;
+package game.system;
 
 /* Code stolen from Nehe's Lesson 07 LWJGL version.
  * It's original header is below.
@@ -9,6 +9,10 @@ package game;
  *      If You've Found This Code Useful, Please Let Me Know.
  *      Visit My Site At nehe.gamedev.net
  */
+
+import game.Camera;
+import game.Player;
+import game.world.World;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -156,6 +160,7 @@ public class Game {
 		world = new World(input,player,camera);
 		player.setWorld(world);
 		player.setCam(camera);
+		camera.setWorld(world);
 		
 		new VBOThread(world).start();
 	}

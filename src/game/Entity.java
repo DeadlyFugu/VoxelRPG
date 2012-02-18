@@ -1,5 +1,7 @@
 package game;
 
+import game.world.World;
+
 public abstract class Entity {
 	public int x,y,z;
 	private World world;

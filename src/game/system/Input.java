@@ -1,4 +1,4 @@
-package game;
+package game.system;
 
 import java.io.*;
 import java.util.HashMap;
@@ -41,7 +41,7 @@ public class Input {
 				return Keyboard.isKeyDown(keyConfig.get(key));
 			}
 		} else {
-			if (keyConfig.containsKey(key)) {
+			if (keyConfig.containsKey("Joy"+key)) {
 				return controller.isButtonPressed(keyConfig.get("Joy"+key));
 			}
 		}

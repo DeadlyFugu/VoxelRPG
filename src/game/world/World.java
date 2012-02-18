@@ -1,5 +1,11 @@
-package game;
+package game.world;
 import static org.lwjgl.opengl.GL11.*;
+
+import game.Camera;
+import game.Entity;
+import game.Player;
+import game.system.Input;
+import game.world.generator.ChunkGeneratorTerrain;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -34,7 +40,7 @@ public class World {
 		int pcx = (int) (camera.x/32);
 		int pcy = (int) (camera.y/32);
 		
-		Chunk[] suitableChunksFound = {null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null};
+		Chunk[] suitableChunksFound = new Chunk[25];
 		for (Chunk c : allChunks) {
 			if (c.x > pcx-3 && c.y > pcy-3 && c.x < pcx+3 && c.y < pcy+3) suitableChunksFound[((c.x-pcx+2)*5+(c.y-pcy+2))] = c;
 			else if (activeChunks.contains(c)) {

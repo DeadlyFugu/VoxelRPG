@@ -1,4 +1,7 @@
-package game;
+package game.system;
+
+import game.world.Chunk;
+import game.world.World;
 
 import java.util.ArrayList;
 

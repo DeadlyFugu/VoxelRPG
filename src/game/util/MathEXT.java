@@ -1,4 +1,4 @@
-package game;
+package game.util;
 
 //Stolen from ENIGMA's mathnc.cpp.
 //Yeah, I steal code from everyone ^^.

@@ -1,4 +1,8 @@
-package game;
+package game.world.generator;
+
+import game.util.PerlinNoise;
+import game.world.Chunk;
+import game.world.World;
 
 public abstract class ChunkGenerator {
 	protected final PerlinNoise _pGen1, _pGen2, _pGen3, _pGen4, _pGen5, _pGen6, _pGen7, _pGen8;

@@ -1,4 +1,7 @@
-package game;
+package game.world.generator;
+
+import game.world.Chunk;
+import game.world.World;
 
 public class ChunkGeneratorTerrain extends ChunkGenerator {
 	public ChunkGeneratorTerrain(World world) {

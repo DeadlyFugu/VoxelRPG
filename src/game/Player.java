@@ -1,5 +1,11 @@
 package game;
 
+import game.system.Input;
+import game.util.MathEXT;
+import game.world.Chunk;
+import game.world.World;
+import game.world.generator.ChunkGeneratorTerrain;
+
 import java.awt.image.BufferedImage;
 import java.awt.image.ColorModel;
 import java.awt.image.WritableRaster;
@@ -20,8 +26,8 @@ public class Player {
 	private Camera cam;
 
 	public Player() {
-		x = 48;
-		y = 48;
+		x = 320;
+		y = 320;
 		z = 50;
 		kfc = 0;
 		px = x;
