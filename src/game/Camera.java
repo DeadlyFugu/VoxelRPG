@@ -2,6 +2,10 @@ package game;
 
 import static org.lwjgl.opengl.GL11.*;
 
+import java.nio.FloatBuffer;
+
+import org.lwjgl.BufferUtils;
+import org.lwjgl.opengl.GL11;
 import org.lwjgl.util.glu.GLU;
 
 public class Camera {
@@ -14,6 +18,9 @@ public class Camera {
 	public float[] cp = {-10,42,-10,0,32,0,0,1,0};
 	private float xsteps, ysteps, zsteps = 0;
 	public float yaw,zoom;
+	private boolean isUnderwater = false;
+	FloatBuffer fogColorUnderwater;
+	FloatBuffer fogColorNormal;
 	
 	public Camera(Input input, Player player) {
 		this.input = input;
@@ -26,9 +33,28 @@ public class Camera {
 		lx = player.x;
 		ly = player.y;
 		lz = player.z;
+
+		fogColorUnderwater = BufferUtils.createFloatBuffer(4);
+		fogColorUnderwater.put(new float [] {0.2f,0.45f,0.98f,1.0f}).rewind();
+		fogColorNormal = BufferUtils.createFloatBuffer(4);
+		fogColorNormal.put(new float [] {0.8f,0.9f,0.95f,1.0f}).rewind();
 	}
 	
 	public void updateView() {
+		
+		if (z < 15.5 && isUnderwater == false) {
+			isUnderwater = true;
+			GL11.glFogf(GL11.GL_FOG_START,0.0f);
+			GL11.glFogf(GL11.GL_FOG_END,32.0f);
+			GL11.glFog(GL11.GL_FOG_COLOR, fogColorUnderwater);
+		} else if (z > 15.5 && isUnderwater == true) {
+			isUnderwater = false;
+			GL11.glFogf(GL11.GL_FOG_START,10.0f);
+			GL11.glFogf(GL11.GL_FOG_END,64.0f);
+			GL11.glFog(GL11.GL_FOG_COLOR, fogColorNormal);
+		}
+		
+		
 	    
 		player.kfc = (float) MathEXT.point_direction(x, y, player.x, player.y);
 		

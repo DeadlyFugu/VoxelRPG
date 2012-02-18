@@ -81,9 +81,18 @@ public class Chunk {
 						//if (dircol[2]) System.out.println("Yes"); else System.out.println("Nope");
 						//System.out.println((int) blockAt(i,j,k])
 						//topleft, topright, Bottomright,bottomleft
-						double[] vcol = {0.8,0.8,0.8,0.8,0.7,0.7,0.7,0.7,0.8,0.8,0.8,0.8,0.6,0.6,0.6,0.6,0.8,0.8,0.8,0.8,1,1,1,1};
+						double dc = 1;
+						if (k < 15)
+							dc = (float) k/16;
+						double[] vcol = {dc*0.8,dc*0.8,dc*0.8,dc*0.8,
+								dc*0.7,dc*0.7,dc*0.7,dc*0.7,
+								dc*0.8,dc*0.8,dc*0.8,dc*0.8,
+								dc*0.6,dc*0.6,dc*0.6,dc*0.6,
+								dc*0.8,dc*0.8,dc*0.8,dc*0.8,
+								dc*1,dc*1,dc*1,dc*1};
 						//if (i!= 0 && i!= 31 && j!= 0 && j!= 31 && k!= 0 && k!= 63) {
 						//+Z axis
+						
 						if (blockAt(i,j,k+1,requiresFullChk) == 0) {
 							if (blockAt(i-1,j,k+1,requiresFullChk) != 0) {vcol[22] -= shadeLevel; vcol[21] -= shadeLevel;}
 							if (blockAt(i+1,j,k+1,requiresFullChk) != 0) {vcol[20] -= shadeLevel; vcol[23] -= shadeLevel;}

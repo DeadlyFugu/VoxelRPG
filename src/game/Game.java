@@ -176,6 +176,9 @@ public class Game {
 		FloatBuffer fogColor = BufferUtils.createFloatBuffer(4);
 		fogColor.put(new float [] {0.8f,0.9f,0.95f,1.0f}).rewind();
 		GL11.glFog(GL11.GL_FOG_COLOR, fogColor);
+		
+		//GL blending
+		GL11.glBlendFunc(GL11.GL_SRC_ALPHA,GL11.GL_ONE_MINUS_SRC_ALPHA);
 
 		GL11.glMatrixMode(GL11.GL_PROJECTION); // Select The Projection Matrix
 		GL11.glLoadIdentity(); // Reset The Projection Matrix

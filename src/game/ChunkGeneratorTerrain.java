@@ -7,7 +7,7 @@ public class ChunkGeneratorTerrain extends ChunkGenerator {
 	}
 
 	public void generate(Chunk c) {
-		if (c.x == 0 || c.y == 0 || c.x == 102 || c.y == 102) {
+		if (c.x == 0 || c.y == 0 || c.x == 402 || c.y == 402) {
 			for (int i=0; i<32; i++) {
 				for (int j=0; j<32; j++) {
 					for (int k=0; k<64; k++) {
@@ -24,7 +24,7 @@ public class ChunkGeneratorTerrain extends ChunkGenerator {
 				int px = c.x*32+i;
 				int py = c.y*32+j;
 				double terrainHeight = calcHeight(px,py);
-				heightMap[i][j] = (byte) (wAvg(oceanHeight(px,py)*10,32+baseHeight(px,py)*16,48+mountainHeight(px,py)*6,-Math.min(terrainHeight,0),Math.max(terrainHeight,0)));
+				heightMap[i][j] = (byte) (wAvg(oceanHeight(px,py)*20+1,32+baseHeight(px,py)*16,48+mountainHeight(px,py)*6,1+Math.min(terrainHeight,0),Math.max(terrainHeight,0)));
 				//System.out.println(heightMap[i][j]);
 				//System.out.println(terrainHeight);
 			}
@@ -40,11 +40,11 @@ public class ChunkGeneratorTerrain extends ChunkGenerator {
 	}
 
 	private double baseHeight(int x,int y) {
-		return _pGen1.fBm(x*0.002,0, y*0.002);
+		return _pGen1.fBm(x*0.001,0, y*0.001);
 	}
 
 	private double oceanHeight(int x,int y) {
-		return _pGen2.fBm(x*0.003,0, y*0.003)+1;
+		return Math.abs(_pGen2.fBm(x*0.0015,0, y*0.0015));
 	}
 
 	private double mountainHeight(int x,int y) {
@@ -52,7 +52,7 @@ public class ChunkGeneratorTerrain extends ChunkGenerator {
 	}
 
 	public double calcHeight(double x, double y) {
-		return _pGen5.fBm(x * 0.001, 0, 0.001 * y);
+		return _pGen5.fBm(x * 0.005, 0, 0.005 * y);
 	}
 	
 	public double calcTemperature(double x, double y) {

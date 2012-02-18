@@ -1,12 +1,5 @@
 package game;
-import static org.lwjgl.opengl.GL11.GL_COLOR_BUFFER_BIT;
-import static org.lwjgl.opengl.GL11.GL_DEPTH_BUFFER_BIT;
-import static org.lwjgl.opengl.GL11.GL_QUADS;
-import static org.lwjgl.opengl.GL11.glBegin;
-import static org.lwjgl.opengl.GL11.glClear;
-import static org.lwjgl.opengl.GL11.glColor3f;
-import static org.lwjgl.opengl.GL11.glEnd;
-import static org.lwjgl.opengl.GL11.glVertex2f;
+import static org.lwjgl.opengl.GL11.*;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -70,6 +63,18 @@ public class World {
 				c.render();
 			}
 		}
+		
+		glEnable(GL_BLEND);
+		
+		glBegin(GL_QUADS);
+		glColor4f(0.2f,0.45f,0.98f,0.5f);
+		glVertex3f(camera.x-64,15.5f,camera.y-64);
+		glVertex3f(camera.x-64,15.5f,camera.y+64);
+		glVertex3f(camera.x+64,15.5f,camera.y+64);
+		glVertex3f(camera.x+64,15.5f,camera.y-64);
+		glEnd();
+		
+		glDisable(GL_BLEND);
 	}
 	
 	public boolean placeFree(float i, float j, float k) {
