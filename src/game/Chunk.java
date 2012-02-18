@@ -145,7 +145,7 @@ public class Chunk {
 						}//*/
 
 						byte bid = blockAt(i,j,k,requiresFullChk);
-						double weight = PerlinNoise.pNoise((x*32+i)*0.15, (y*32+j)*0.15, 0.2, 2);
+						double weight = new PerlinNoise(world.getSeed().hashCode()+7).noise((x*32+i)*0.015, (y*32+j)*0.015, k*0.015);
 						byte colr = (byte) (bcolra[bid] + (bcolra[bid] - bcolrb[bid])*weight);
 						byte colg = (byte) (bcolga[bid] + (bcolga[bid] - bcolgb[bid])*weight);
 						byte colb = (byte) (bcolba[bid] + (bcolba[bid] - bcolbb[bid])*weight);

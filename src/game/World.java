@@ -26,7 +26,7 @@ public class World {
 		this.input = input;
 		this.player = player;
 		this.camera = camera;
-		this.chunkGenerator = new ChunkGenerator();
+		this.chunkGenerator = new ChunkGeneratorTerrain(this);
 	}
 	
 	public void update() {
@@ -113,6 +113,10 @@ public class World {
 		if (ctr != null) {
 			activeChunks.remove(ctr);
 		}
+	}
+	
+	public Integer getSeed() {
+		return 3337;
 	}
 	
 	public Chunk getChunkAt(int i, int j) {

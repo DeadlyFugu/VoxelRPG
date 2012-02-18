@@ -172,7 +172,7 @@ public class Game {
 		GL11.glEnable(GL11.GL_FOG); //Fog
 		GL11.glFogf(GL11.GL_FOG_MODE,GL11.GL_LINEAR);
 		GL11.glFogf(GL11.GL_FOG_START,10.0f);
-		GL11.glFogf(GL11.GL_FOG_END,100.0f);
+		GL11.glFogf(GL11.GL_FOG_END,64.0f);
 		FloatBuffer fogColor = BufferUtils.createFloatBuffer(4);
 		fogColor.put(new float [] {0.8f,0.9f,0.95f,1.0f}).rewind();
 		GL11.glFog(GL11.GL_FOG_COLOR, fogColor);

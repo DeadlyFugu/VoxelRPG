@@ -1,20 +1,35 @@
 package game;
 
-public class ChunkGenerator {
+public abstract class ChunkGenerator {
+	protected final PerlinNoise _pGen1, _pGen2, _pGen3, _pGen4, _pGen5, _pGen6, _pGen7, _pGen8;
+
+	/**
+	 * Init. the generator with a given seed value.
+	 *
+	 * @param generatorManager The generator manager
+	 */
+	public ChunkGenerator(World world) {
+		_pGen1 = new PerlinNoise(world.getSeed().hashCode());
+		_pGen1.setOctaves(8);
+
+		_pGen2 = new PerlinNoise(world.getSeed().hashCode() + 1);
+		_pGen2.setOctaves(8);
+
+		_pGen3 = new PerlinNoise(world.getSeed().hashCode() + 2);
+		_pGen3.setOctaves(8);
+
+		_pGen4 = new PerlinNoise(world.getSeed().hashCode() + 3);
+		_pGen5 = new PerlinNoise(world.getSeed().hashCode() + 4);
+		_pGen6 = new PerlinNoise(world.getSeed().hashCode() + 5);
+		_pGen7 = new PerlinNoise(world.getSeed().hashCode() + 6);
+		_pGen8 = new PerlinNoise(world.getSeed().hashCode() + 7);
+	}
+
+	/**
+	 * Apply the generation process to the given chunk.
+	 *
+	 * @param c The chunk to generate/populate
+	 */
 	public void generate(Chunk c) {
-		byte[][] heightMap = new byte[32][32];
-		for (int i=0; i<32; i++) {
-			for (int j=0; j<32; j++) {
-				heightMap[i][j] = (byte) (32+PerlinNoise.pNoise((c.x*32+i)*0.05, (c.y*32+j)*0.05, 0.3, 2)*32);
-			}
-		}
-		for (int  i=0; i<32; i++) {
-			for (int  j=0; j<32; j++) {
-				for (int  k=0; k<64; k++) {
-					if (heightMap[i][j] > k) c.chunkData[i][j][k] = 1;
-					else c.chunkData[i][j][k] = 0;
-				}
-			}
-		}
 	}
 }

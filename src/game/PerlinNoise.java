@@ -1,129 +1,147 @@
+/*
+* Copyright 2011 Benjamin Glatzel <benjamin.glatzel@me.com>.
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+* http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*/
 package game;
-/**
- * Stolen from a Perlin noise sample applet by Bruno Augier.
- * Original header below.
- * 
- * Perlin sample Applet
- *
- * Sample 2D perlin noise generator with sample applet
- *
- * @author bruno augier
- * @email bruno.augier@dzzd.net
- * @website http://dzzd.net/
- * @version 1.00 2004/08/06
- * @updated 2007/11/28
- */
 
+/**
+* Improved Perlin noise based on the reference implementation by Ken Perlin.
+*
+* @author Benjamin Glatzel <benjamin.glatzel@me.com>
+*/
 public class PerlinNoise {
 
-	/**
-	 * Brut noise generator using pseudo-random
-	 */
-	public static double noise(int x, int y) {
-		x = x + y * 57;
-		x = ((x << 13) ^ x);
-		double t = (x * (x * x * 15731 + 789221) + 1376312589) & 0x7fffffff;
-		return 1 - t * 0.000000000931322574615478515625;
+    private static final double LACUNARITY = 1.9379201;
+    private static final double H = 0.736281;
 
-	}
+    private double[] _spectralWeights;
 
-	/**
-	 * Smoothed noise generator using 9 brut noise
-	 */
-	public static double sNoise(int x, int y) {
-		double corners = (noise(x - 1, y - 1) + noise(x + 1, y - 1)
-				+ noise(x - 1, y + 1) + noise(x + 1, y + 1)) * 0.0625;
-		double sides = (noise(x - 1, y) + noise(x + 1, y) + noise(x, y - 1) + noise(
-				x, y + 1)) * 0.125;
-		double center = noise(x, y) * 0.25;
-		return corners + sides + center;
-	}
+    private final int[] _noisePermutations;
+    private boolean _recomputeSpectralWeights = true;
+    private int _octaves = 5;
 
-	/**
-	 * Linear Interpolator
-	 * 
-	 * @param a
-	 *            value 1
-	 * @param b
-	 *            value 2
-	 * @param x
-	 *            interpolator factor
-	 * 
-	 * @return value interpolated from a to b using x factor by linear
-	 *         interpolation
-	 */
-	public static double lInterpoleLin(double a, double b, double x) {
-		return a * (1 - x) + b * x;
-	}
+    /**
+* Init. a new generator with a given seed value.
+*
+* @param seed The seed value
+*/
+    public PerlinNoise(int seed) {
+        FastRandom rand = new FastRandom(seed);
 
-	/**
-	 * Cosine Interpolator
-	 * 
-	 * @param a
-	 *            value 1
-	 * @param b
-	 *            value 2
-	 * @param x
-	 *            interpolator factor
-	 * 
-	 * @return value interpolated from a to b using x factor by cosin
-	 *         interpolation
-	 */
-	public static double lInterpoleCos(double a, double b, double x) {
+        _noisePermutations = new int[512];
+        int[] _noiseTable = new int[256];
 
-		double ft = x * 3.1415927;
-		double f = (1 - Math.cos(ft)) * .5;
-		return a * (1 - f) + b * f;
-	}
+        // Init. the noise table
+        for (int i = 0; i < 256; i++)
+            _noiseTable[i] = i;
 
-	/**
-	 * Smooth noise generator with two input 2D <br>
-	 * You may change the interpolation method : cosin , linear , cubic </br>
-	 * 
-	 * @param x
-	 *            x parameter
-	 * @param y
-	 *            y parameter
-	 * 
-	 * @return value of smoothed noise for 2d value x,y
-	 */
-	public static double iNoise(double x, double y) {
-		int iX = (int) x;
-		int iY = (int) y;
-		double dX = x - iX;
-		double dY = y - iY;
-		double p1 = sNoise(iX, iY);
-		double p2 = sNoise(iX + 1, iY);
-		double p3 = sNoise(iX, iY + 1);
-		double p4 = sNoise(iX + 1, iY + 1);
-		double i1 = lInterpoleLin(p1, p2, dX);
-		double i2 = lInterpoleLin(p3, p4, dX);
-		return lInterpoleLin(i1, i2, dY);
-	}
+        // Shuffle the array
+        for (int i = 0; i < 256; i++) {
+            int j = rand.randomInt() % 256;
+            j = (j < 0) ? -j : j;
 
-	/**
-	 * Perlin noise generator for two input 2D
-	 * 
-	 * @param x
-	 *            x parameter
-	 * @param y
-	 *            y parameter
-	 * @param octave
-	 *            maximum octave/harmonic
-	 * @param persistence
-	 *            noise persitence
-	 * @return perlin noise value for given entry
-	 */
-	public static double pNoise(double x, double y, double persistence, int octave) {
-		double result;
-		double amplitude = 1;
-		int frequence = 1;
-		result = 0;
-		for (int n = 0; n < octave; n++) {
-			result += iNoise(x * frequence, y * frequence) * amplitude;
-			frequence <<= 1;
-			amplitude *= persistence;
-		}
-		return result;
-	}
+            int swap = _noiseTable[i];
+            _noiseTable[i] = _noiseTable[j];
+            _noiseTable[j] = swap;
+        }
+
+        // Finally replicate the noise permutations in the remaining 256 index positions
+        for (int i = 0; i < 256; i++)
+            _noisePermutations[i] = _noisePermutations[i + 256] = _noiseTable[i];
+
+    }
+
+    /**
+* Returns the noise value at the given position.
+*
+* @param x Position on the x-axis
+* @param y Position on the y-axis
+* @param z Position on the z-axis
+* @return The noise value
+*/
+    public double noise(double x, double y, double z) {
+        int X = (int) Math.floor(x) & 255, Y = (int) Math.floor(y) & 255, Z = (int) Math.floor(z) & 255;
+
+        x -= Math.floor(x);
+        y -= Math.floor(y);
+        z -= Math.floor(z);
+
+        double u = fade(x), v = fade(y), w = fade(z);
+        int A = _noisePermutations[X] + Y, AA = _noisePermutations[A] + Z, AB = _noisePermutations[(A + 1)] + Z,
+                B = _noisePermutations[(X + 1)] + Y, BA = _noisePermutations[B] + Z, BB = _noisePermutations[(B + 1)] + Z;
+
+        return lerp(w, lerp(v, lerp(u, grad(_noisePermutations[AA], x, y, z),
+                grad(_noisePermutations[BA], x - 1, y, z)),
+                lerp(u, grad(_noisePermutations[AB], x, y - 1, z),
+                        grad(_noisePermutations[BB], x - 1, y - 1, z))),
+                lerp(v, lerp(u, grad(_noisePermutations[(AA + 1)], x, y, z - 1),
+                        grad(_noisePermutations[(BA + 1)], x - 1, y, z - 1)),
+                        lerp(u, grad(_noisePermutations[(AB + 1)], x, y - 1, z - 1),
+                                grad(_noisePermutations[(BB + 1)], x - 1, y - 1, z - 1))));
+    }
+
+    /**
+* Returns Fractional Brownian Motion at the given position.
+*
+* @param x Position on the x-axis
+* @param y Position on the y-axis
+* @param z Position on the z-axis
+* @return The noise value
+*/
+    public double fBm(double x, double y, double z) {
+        double result = 0.0;
+
+        if (_recomputeSpectralWeights) {
+            _spectralWeights = new double[_octaves];
+
+            for (int i = 0; i < _octaves; i++)
+                _spectralWeights[i] = Math.pow(LACUNARITY, -H * i);
+
+            _recomputeSpectralWeights = false;
+        }
+
+        for (int i = 0; i < _octaves; i++) {
+            result += noise(x, y, z) * _spectralWeights[i];
+
+            x *= LACUNARITY;
+            y *= LACUNARITY;
+            z *= LACUNARITY;
+        }
+
+        return result;
+    }
+
+    private static double fade(double t) {
+        return t * t * t * (t * (t * 6 - 15) + 10);
+    }
+
+    private static double lerp(double t, double a, double b) {
+        return a + t * (b - a);
+    }
+
+    private static double grad(int hash, double x, double y, double z) {
+        int h = hash & 15;
+        double u = h < 8 ? x : y, v = h < 4 ? y : h == 12 || h == 14 ? x : z;
+        return ((h & 1) == 0 ? u : -u) + ((h & 2) == 0 ? v : -v);
+    }
+
+    public void setOctaves(int octaves) {
+        _octaves = octaves;
+        _recomputeSpectralWeights = true;
+    }
+
+    public int getOctaves() {
+        return _octaves;
+    }
 }
