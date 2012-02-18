@@ -7,6 +7,17 @@ public class ChunkGeneratorTerrain extends ChunkGenerator {
 	}
 
 	public void generate(Chunk c) {
+		if (c.x == 0 || c.y == 0 || c.x == 102 || c.y == 102) {
+			for (int i=0; i<32; i++) {
+				for (int j=0; j<32; j++) {
+					for (int k=0; k<64; k++) {
+						if (k != 63) c.chunkData[i][j][k] = 1;
+						else c.chunkData[i][j][k] = 0;
+					}
+				}
+			}
+			return;
+		}
 		byte[][] heightMap = new byte[32][32];
 		for (int i=0; i<32; i++) {
 			for (int j=0; j<32; j++) {

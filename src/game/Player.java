@@ -12,8 +12,8 @@ public class Player {
 	private Camera cam;
 
 	public Player() {
-		x = 10;
-		y = 10;
+		x = 42;
+		y = 42;
 		z = 40;
 		kfc = 0;
 		px = x;
