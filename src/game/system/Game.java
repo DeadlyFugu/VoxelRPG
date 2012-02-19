@@ -10,8 +10,8 @@ package game.system;
  *      Visit My Site At nehe.gamedev.net
  */
 
-import game.Camera;
 import game.Player;
+import game.render.Camera;
 import game.world.World;
 
 import java.io.BufferedReader;

@@ -1,5 +1,6 @@
 package game;
 
+import game.render.Camera;
 import game.system.Input;
 import game.util.MathEXT;
 import game.world.Chunk;

@@ -1,7 +1,8 @@
-package game;
+package game.render;
 
 import static org.lwjgl.opengl.GL11.*;
 
+import game.Player;
 import game.system.Input;
 import game.util.MathEXT;
 import game.world.World;

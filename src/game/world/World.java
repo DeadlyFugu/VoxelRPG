@@ -1,9 +1,9 @@
 package game.world;
 import static org.lwjgl.opengl.GL11.*;
 
-import game.Camera;
 import game.Entity;
 import game.Player;
+import game.render.Camera;
 import game.system.Input;
 import game.world.generator.ChunkGeneratorTerrain;
 
