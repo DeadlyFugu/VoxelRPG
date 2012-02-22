@@ -1,0 +1,7 @@
+colorR,60
+colorG,120
+colorB,20
+scolorR,80
+scolorG,100
+scolorB,40
+colorMode,1

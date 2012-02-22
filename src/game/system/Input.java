@@ -1,5 +1,7 @@
 package game.system;
 
+import game.util.HashmapLoader;
+
 import java.io.*;
 import java.util.HashMap;
 
@@ -11,14 +13,14 @@ import org.lwjgl.util.input.ControllerAdapter;
 
 
 public class Input {
-	HashMap<String, Integer> keyConfig = new HashMap<String,Integer>();
+	HashMap<String, Integer> keyConfig;
 	public float ax,ay,cx,cy;
 	private float atx,aty,ctx,cty;
 	private boolean emulatedAxis;
 	private Controller controller;
 
 	public Input() {
-		readFromConfigFile("config.txt");
+		keyConfig = HashmapLoader.readHashmap("config");
 		ax = 0; ay = 0;
 		cx = 0; cy = 0;
 		try {
@@ -90,39 +92,5 @@ public class Input {
 
 	}
 
-	public void writeConfigToFile(String filename) {
-		File file = new File(filename);
-		try {
-			BufferedWriter bw = new BufferedWriter(new FileWriter(file));
-			for(String k:keyConfig.keySet()) {
-				bw.write(k + "," + keyConfig.get(k));
-				bw.newLine();
-			}
-			bw.flush();
-			bw.close();
-		} catch (Exception e) {
-			e.printStackTrace();
-			System.exit(1);
-		}
-	}
 
-	public void readFromConfigFile(String filename) {
-		//HashMap<String, Boolean> hashmap = new HashMap<String, Boolean>();
-		File file = new File(filename);
-		try {
-			BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(file)));
-			String l;
-			while((l = br.readLine()) != null) {
-				String[] args = l.split("[,]", 2);
-				if(args.length != 2)continue;
-				String p = args[0].replaceAll(" ", "");
-				String b = args[1].replaceAll(" ", "");
-				keyConfig.put(p, Integer.parseInt(b));
-			}
-			br.close();
-		} catch (Exception e) {
-			e.printStackTrace();
-			System.exit(1);
-		}
-	}
 }
