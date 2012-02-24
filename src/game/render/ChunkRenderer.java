@@ -2,20 +2,17 @@ package game.render;
 
 import java.util.ArrayList;
 
+import org.lwjgl.util.Color;
+
 import game.util.PerlinNoise;
 import game.world.Chunk;
+import game.world.block.Block;
 
 public class ChunkRenderer {
 	public static void renderChunk(Chunk c) {
 		c.vboDataAL.clear();
 		c.vboDataALE.clear();
 		
-		byte[] bcolra = {0,60};
-		byte[] bcolga = {0,120};
-		byte[] bcolba = {0,20};
-		byte[] bcolrb = {0,100};
-		byte[] bcolgb = {0,125};
-		byte[] bcolbb = {0,40};
 		double shadeLevel = 0.15;
 
 		c.friendChunks[0] = c.world.getChunkAt(c.x+1, c.y);
@@ -111,11 +108,15 @@ public class ChunkRenderer {
 						}//*/
 
 						byte bid = blockAt(i,j,k,requiresFullChk,c);
-						double weight = new PerlinNoise(c.world.getSeed().hashCode()+7).noise((c.x*32+i)*0.015, (c.y*32+j)*0.015, k*0.015);
-						byte colr = (byte) (bcolra[bid] + (bcolra[bid] - bcolrb[bid])*weight);
-						byte colg = (byte) (bcolga[bid] + (bcolga[bid] - bcolgb[bid])*weight);
-						byte colb = (byte) (bcolba[bid] + (bcolba[bid] - bcolbb[bid])*weight);
-
+						//double weight = new PerlinNoise(c.world.getSeed().hashCode()+7).noise((c.x*32+i)*0.015, (c.y*32+j)*0.015, k*0.015);
+						//byte colr = (byte) (bcolra[bid] + (bcolra[bid] - bcolrb[bid])*weight);
+						//byte colg = (byte) (bcolga[bid] + (bcolga[bid] - bcolgb[bid])*weight);
+						//byte colb = (byte) (bcolba[bid] + (bcolba[bid] - bcolbb[bid])*weight);
+						Color col = Block.blocks[bid].getColor();
+						byte colr = (byte) col.getRed();
+						byte colg = (byte) col.getGreen();
+						byte colb = (byte) col.getBlue();
+						
 						if (dircol[0]) { //+x axis stable
 							vertexToAL(i+1.0f,j+1.0f,k+1.0f,(byte) (colr*vcol[0]),(byte) (colg*vcol[0]),(byte) (colb*vcol[0]),(byte) 1,c.vboDataAL,c.vboDataALE);
 							vertexToAL(i+1.0f,j+0.0f,k+1.0f,(byte) (colr*vcol[1]),(byte) (colg*vcol[1]),(byte) (colb*vcol[1]),(byte) 1,c.vboDataAL,c.vboDataALE);

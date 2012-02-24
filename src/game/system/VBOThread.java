@@ -18,10 +18,10 @@ public class VBOThread extends Thread {
 			for (Chunk c : chunkQueue) {
 				try {
 				c.loadVBO();
+				world.chunkQueue.remove(c);
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
-				world.chunkQueue.remove(c);
 				System.out.println("Chunk in Queue complete");
 			}
 		}

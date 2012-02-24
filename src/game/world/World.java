@@ -40,22 +40,26 @@ public class World {
 		int pcx = (int) (camera.x/32);
 		int pcy = (int) (camera.y/32);
 		
-		Chunk[] suitableChunksFound = new Chunk[25];
+		int cv = 7;
+		int cvr = cv*2+1;
+		int cvc = cv+1;
+		
+		Chunk[] suitableChunksFound = new Chunk[cvr*cvr];
 		for (Chunk c : allChunks) {
-			if (c.x > pcx-3 && c.y > pcy-3 && c.x < pcx+3 && c.y < pcy+3) suitableChunksFound[((c.x-pcx+2)*5+(c.y-pcy+2))] = c;
+			if (c.x > pcx-cvc && c.y > pcy-cvc && c.x < pcx+cvc && c.y < pcy+cvc) suitableChunksFound[((c.x-pcx+cv)*cvr+(c.y-pcy+cv))] = c;
 			else if (activeChunks.contains(c)) {
 				activeChunks.remove(c);
 			}//*/
 		}
 		
-		for (int i=0; i<25; i++) {
+		for (int i=0; i<cvr*cvr; i++) {
 			if (suitableChunksFound[i] != null) {
 				if (!activeChunks.contains(suitableChunksFound[i])) {
 					activeChunks.add(suitableChunksFound[i]);
 				}
 			} else {
 				System.out.println("New chunk added");
-				allChunks.add(new Chunk((int) (pcx+(Math.floor(i/5))-2),pcy+(i%5)-2, this));
+				allChunks.add(new Chunk((int) (pcx+(Math.floor(i/cvr))-cv),pcy+(i%cvr)-cv, this));
 				activeChunks.add(allChunks.get(allChunks.size()-1));
 			}
 		}
@@ -74,10 +78,10 @@ public class World {
 		
 		glBegin(GL_QUADS);
 		glColor4f(0.2f,0.45f,0.98f,0.5f);
-		glVertex3f(camera.x-64,15.5f,camera.y-64);
-		glVertex3f(camera.x-64,15.5f,camera.y+64);
-		glVertex3f(camera.x+64,15.5f,camera.y+64);
-		glVertex3f(camera.x+64,15.5f,camera.y-64);
+		glVertex3f(camera.x-128,15.5f,camera.y-128);
+		glVertex3f(camera.x-128,15.5f,camera.y+128);
+		glVertex3f(camera.x+128,15.5f,camera.y+128);
+		glVertex3f(camera.x+128,15.5f,camera.y-128);
 		glEnd();
 		
 		glDisable(GL_BLEND);
@@ -136,6 +140,13 @@ public class World {
 				return c;
 			}
 		}
-		return new Chunk(i,j, this);
+		for (Chunk c : allChunks) {
+			if (c.x == i && c.y == j) {
+				return c;
+			}
+		}
+		Chunk c = new Chunk(i,j, this);
+		allChunks.add(c);
+		return c;
 	}
 }

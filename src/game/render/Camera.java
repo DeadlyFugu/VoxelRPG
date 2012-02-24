@@ -60,7 +60,7 @@ public class Camera {
 		} else if (z > 15.5 && isUnderwater == true) {
 			isUnderwater = false;
 			GL11.glFogf(GL11.GL_FOG_START,10.0f);
-			GL11.glFogf(GL11.GL_FOG_END,64.0f);
+			GL11.glFogf(GL11.GL_FOG_END,128.0f);
 			GL11.glFog(GL11.GL_FOG_COLOR, fogColorNormal);
 		}
 		
